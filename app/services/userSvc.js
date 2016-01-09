@@ -1,16 +1,12 @@
 trvlApp.service('userSvc', function($firebaseArray, $firebaseObject, constants) {
   var baseRef = new Firebase(constants.fbBaseUrl);
 
-  this.addNewUserData = function(uid, newUserEmail, newUserName) {
+  this.addNewUserData = function(uid, newUserObj) {
     var refObj = this.getUserRefObj(uid); // get ref obj for user from fb
-    refObj.email = newUserEmail; // add user data
-    refObj.name = newUserName;
-    refObj.$save() // save updated data
-    .then(
-      function(response) {
-        console.log('user ', newUserName, ' added to fb data!');
-      }
-    );
+    refObj.email = newUserObj.email; // add user data
+    refObj.name = newUserObj.name;
+    refObj.country = newUserObj.country;
+    return refObj.$save(); // save updated data, return promise
   };
 
   this.getUserRefObj = function(uid) {

@@ -2,33 +2,44 @@
 
 $formColor: #d3d3d3;
 $formPadding: 20px;
+$master-border-radius: 5px;
+$center-margin: 0 auto;
 
 /*MASTER RULES*/
 .view-body {
   height: 100%;
-  width: 100%;
-  margin-bottom: 0; /*override materialize default for .row*/
+  position: relative;
 }
 
-  // for view-body on login page
+  /* for view-body on login page */
   .full-screen-photo {
     background-image: url('img/login-photo.jpg');
     background-size: cover;
   }
 
+/* custom class to vertically align block elem in parent*/
+/* parent needs to have relative position*/
+.vertical-align {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 
 /*LOGIN PAGE*/
 
 #user-access-form {
+
   background-color: $formColor;
-  margin: 0 auto;
-  padding: $formPadding;
+  border-radius: $master-border-radius;
+  padding-bottom: $formPadding;
+
 
   .heading-box {
     text-align: center;
 
     h1 {
-      margin: 10px auto;
+      margin: $center-margin;
+      margin-top: 10px;
       font-weight: bold;
     }
   }

@@ -1,13 +1,9 @@
-trvlApp.controller('loginCtrl', function($scope, $state, authSvc) {
+trvlApp.controller('loginCtrl', function($scope, $state, authSvc, constants) {
   $scope.test = 'Ctrl connected!';
-  $scope.signup = false; // default view: login, not new user reg
+  $scope.newuser = false; // default view: login, not new user reg
 
-  $scope.showSignup = function() {
-    $scope.signup = true;
-  };
-
-  $scope.showLogin = function() {
-    $scope.signup = false;
+  $scope.toggleForm = function() {
+    $scope.newuser = !$scope.newuser;
   };
 
   $scope.login = function(userObj) {
@@ -15,6 +11,13 @@ trvlApp.controller('loginCtrl', function($scope, $state, authSvc) {
   };
 
   $scope.signup = function(newUserObj) {
-    authSvc.register(newUserObj);
+    authSvc.register(newUserObj) // run register method
+    .then(
+      function(response) {
+        $scope.newuser = false; // once completed, change to login form
+      }
+    );
   };
+
+  $scope.countries = constants.country_list;
 });
