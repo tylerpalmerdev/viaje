@@ -1,0 +1,39 @@
+/*VARIABLES*/
+
+$formColor: #d3d3d3;
+$formPadding: 20px;
+
+/*MASTER RULES*/
+.view-body {
+  height: 100%;
+  width: 100%;
+  margin-bottom: 0; /*override materialize default for .row*/
+}
+
+  // for view-body on login page
+  .full-screen-photo {
+    background-image: url('img/login-photo.jpg');
+    background-size: cover;
+  }
+
+
+/*LOGIN PAGE*/
+
+#user-access-form {
+  background-color: $formColor;
+  margin: 0 auto;
+  padding: $formPadding;
+
+  .heading-box {
+    text-align: center;
+
+    h1 {
+      margin: 10px auto;
+      font-weight: bold;
+    }
+  }
+
+  p {
+    text-align: center;
+  }
+}

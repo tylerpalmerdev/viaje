@@ -1,0 +1,35 @@
+<html ng-app="trvlApp">
+  <head>
+    <title>Travel Log App</title>
+    <!--To browser, site optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Import materialize from CDN-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+    <!-- Import compiled, final CSS file -->
+    <link rel="stylesheet" href="style.css">
+
+  </head>
+
+  <body>
+
+
+    <ui-view>
+      <!-- each state/view's content will go here -->
+    </ui-view>
+
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <!-- Import Materialize JS file from CDN-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
+    <!-- Firebase -->
+    <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+    <!-- AngularFire -->
+    <script src="https://cdn.firebase.com/libs/angularfire/1.1.1/angularfire.min.js"></script>
+    <!-- Import compiled, final JS file-->
+    <script type="text/javascript" src="bundle.js"></script>
+  </body>
+</html>

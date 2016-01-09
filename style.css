@@ -1,0 +1,33 @@
+/*VARIABLES*/
+/*MASTER RULES*/
+.view-body {
+  height: 100%;
+  width: 100%;
+  margin-bottom: 0;
+  /*override materialize default for .row*/
+}
+
+.full-screen-photo {
+  background-image: url("img/login-photo.jpg");
+  background-size: cover;
+}
+
+/*LOGIN PAGE*/
+#user-access-form {
+  background-color: #d3d3d3;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+#user-access-form .heading-box {
+  text-align: center;
+}
+
+#user-access-form .heading-box h1 {
+  margin: 10px auto;
+  font-weight: bold;
+}
+
+#user-access-form p {
+  text-align: center;
+}

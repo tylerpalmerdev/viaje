@@ -1,0 +1,48 @@
+<div class="view-body full-screen-photo row valign-wrapper">
+  <form id="user-access-form" class="row col s12 m8 xl6 valign z-depth-2">
+    <div class="view-nav">
+      <a ui-sref="login">Login</a>
+      <a ui-sref="register">Reg</a>
+      <a ui-sref="dash">Dash</a>
+      <a ui-sref="trip({tripId: '123'})">Trip 123</a>
+      <a ui-sref="stop({stopId: 'abc'})">Stop ABC</a>
+      <span>{{test}}</span><!--test to see if ctrl connected -->
+    </div>
+    <div class="heading-box">
+      <h1>VIAJE</h1>
+      <h5>Track your travel! Log trips, stops, and journal entries.</h5>
+    </div>
+    <div ng-hide="signup" class="login-form-inputs">
+      <p>
+        Login below, or <a href="" ng-click="showSignup()">Sign Up</a> if you're new.
+      </p>
+      <div class="input-field">
+        <input ng-model="user.email" id="email" type="email" class="validate">
+        <label class="col s12" for="email" data-error="Please enter a correct email address.">Email</label>
+      </div>
+      <div class="input-field">
+        <input ng-model="user.password" type="password" class="validate">
+        <label for="password">Password</label>
+      </div>
+      <a ng-click="login(user)" class="col s6 offset-s3 waves-effect waves-light btn">Log In</a>
+    </div>
+    <div ng-show="signup" class="signup-form-inputs">
+      <p>
+        Sign up below, or <a href="" ng-click="showLogin()">Login</a> if you're already registered.
+      </p>
+      <div class="input-field">
+        <input ng-model="newUser.name" type="text" class="validate">
+        <label for="email">Full Name</label>
+      </div>
+      <div class="input-field">
+        <input ng-model="newUser.email" type="email" class="validate">
+        <label for="email">Email</label>
+      </div>
+      <div class="input-field">
+        <input ng-model="newUser.password" type="password" class="validate">
+        <label for="password">Choose a Password</label>
+      </div>
+      <a ng-click="signup(newUser)" class="col s6 offset-s3 waves-effect waves-light btn">Sign Up</a>
+    </div>
+  </form>
+</div>

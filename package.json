@@ -1,0 +1,27 @@
+{
+  "name": "viaje",
+  "version": "1.0.0",
+  "description": "A web app for you to keep track of your travels. Track trips, stops, and journal entries. Made with Angular, Firebase, and Materialize.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/therealTP/viaje.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/therealTP/viaje/issues"
+  },
+  "homepage": "https://github.com/therealTP/viaje#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-ng-annotate": "^1.1.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-sass": "^2.1.1",
+    "gulp-watch": "^4.3.5"
+  }
+}
