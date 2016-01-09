@@ -1,0 +1,43 @@
+@import '../variables';
+
+$menu-color: #355DBF;
+$menu-text-color: white;
+$menu-height: 60px;
+$menu-padding: 20px;
+$menu-logo-flex-grow: 3;
+$menu-links-padding: 7px;
+
+.menu-bar {
+  width: 100%;
+  height: $menu-height;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $menu-color;
+  padding: $menu-padding;
+
+  .header-logo {
+    float: left;
+    flex-grow: $menu-logo-flex-grow;
+
+    h2 {
+      margin: 0;
+      color: $menu-text-color;
+    }
+  }
+
+  .header-links {
+    a {
+      color: $menu-text-color;
+    }
+  }
+
+  .header-buttons {
+    float: right;
+
+    button {
+      margin-left: $button-margin;
+    }
+  }
+}

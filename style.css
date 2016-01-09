@@ -1,24 +1,59 @@
 /*VARIABLES*/
-/*MASTER RULES*/
+/* ensure view-body takes up whole height of screen */
 .view-body {
   height: 100%;
   position: relative;
 }
 
+/* custom class to vertically align block elem in parent*/
+/* parent needs to have relative position*/
+.vertical-align {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/*VARIABLES*/
+.menu-bar {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #355DBF;
+  padding: 20px;
+}
+
+.menu-bar .header-logo {
+  float: left;
+  flex-grow: 3;
+}
+
+.menu-bar .header-logo h2 {
+  margin: 0;
+  color: white;
+}
+
+.menu-bar .header-links a {
+  color: white;
+}
+
+.menu-bar .header-buttons {
+  float: right;
+}
+
+.menu-bar .header-buttons button {
+  margin-left: 15px;
+}
+
+/*VARIABLES*/
 /* for view-body on login page */
 .full-screen-photo {
   background-image: url("img/login-photo.jpg");
   background-size: cover;
 }
 
-/* custom class to vertically align block elem in parent*/
-/* parent needs to have relative position*/
-.vertical-align {
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-/*LOGIN PAGE*/
 #user-access-form {
   background-color: #d3d3d3;
   border-radius: 5px;

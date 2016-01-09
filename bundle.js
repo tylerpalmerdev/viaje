@@ -16,16 +16,25 @@ trvlApp.config(["$stateProvider", "$urlRouterProvider", function($stateProvider,
     controller: 'dashCtrl'
     // resolve: make sure user is logged in w/ auth svc (same as below)
   })
+  .state('mytrips', {
+    url: '/mytrips',
+    templateUrl: 'app/routes/mytrips/mytripsTmpl.html',
+    controller: 'mytripsCtrl'
+  })
   .state('trip', {
-    url: 'trip/:tripId',
+    url: '/trip/:tripId',
     templateUrl: 'app/routes/trip/tripTmpl.html',
     controller: 'tripCtrl'
   })
   .state('stop', {
-    parent: 'trip',
     url: '/stop/:stopId',
     templateUrl: 'app/routes/stop/stopTmpl.html',
     controller: 'stopCtrl'
+  })
+  .state('write', {
+    url: '/write',
+    templateUrl: 'app/routes/write/writeTmpl.html',
+    controller: 'writeCtrl'
   });
 
   // if err, route to dash, which will route to login with no auth
@@ -119,15 +128,17 @@ trvlApp.service('userSvc', ["$firebaseArray", "$firebaseObject", "constants", fu
   };
 }]);
 
-trvlApp.directive('menuBar', function() {
+trvlApp.directive('citySearch', function() {
   return {
-    templateUrl: 'app/directives/menuBar/menuBarTmpl.html',
+    templateUrl: 'app/directives/citySearch/citySearchTmpl.html',
     restrict: 'E',
-    scope: {
-      logoText: '='
-    }
+    controller: 'citySearchCtrl'
   };
 });
+
+trvlApp.controller('citySearchCtrl', ["$scope", function($scope) {
+  $scope.test = 'City Search CTRL connected';
+}]);
 
 trvlApp.controller('dashCtrl', ["$scope", function($scope) {
   $scope.logo = 'LOGO YEY';
@@ -157,7 +168,26 @@ trvlApp.controller('loginCtrl', ["$scope", "$state", "authSvc", "constants", fun
   $scope.countries = constants.country_list;
 }]);
 
+trvlApp.controller('mytripsCtrl', ["$scope", function($scope) {
+  $scope.test = 'Mytrips ctrl connected!';
+  $scope.activeTrip = false;
+}]);
+
+trvlApp.controller('stopCtrl', ["$scope", function($scope) {
+  $scope.test = 'stopCtrl connected';
+}]);
 
 trvlApp.controller('tripCtrl', ["$scope", function($scope) {
 
+}]);
+
+trvlApp.directive('menuBar', function() {
+  return {
+    templateUrl: 'app/directives/menuBar/menuBarTmpl.html',
+    restrict: 'E'
+  };
+});
+
+trvlApp.controller('writeCtrl', ["$scope", function($scope) {
+  $scope.test = 'Writectrl connected';
 }]);

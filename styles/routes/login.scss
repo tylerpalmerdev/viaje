@@ -1,0 +1,27 @@
+@import '../variables';
+
+/* for view-body on login page */
+.full-screen-photo {
+  background-image: url('img/login-photo.jpg');
+  background-size: cover;
+}
+
+#user-access-form {
+  background-color: $form-color;
+  border-radius: $master-border-radius;
+  padding-bottom: $form-padding;
+
+  .heading-box {
+    text-align: center;
+
+    h1 {
+      margin: $center-margin;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  }
+
+  p {
+    text-align: center;
+  }
+}

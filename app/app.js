@@ -16,16 +16,25 @@ trvlApp.config(function($stateProvider, $urlRouterProvider) {
     controller: 'dashCtrl'
     // resolve: make sure user is logged in w/ auth svc (same as below)
   })
+  .state('mytrips', {
+    url: '/mytrips',
+    templateUrl: 'app/routes/mytrips/mytripsTmpl.html',
+    controller: 'mytripsCtrl'
+  })
   .state('trip', {
-    url: 'trip/:tripId',
+    url: '/trip/:tripId',
     templateUrl: 'app/routes/trip/tripTmpl.html',
     controller: 'tripCtrl'
   })
   .state('stop', {
-    parent: 'trip',
     url: '/stop/:stopId',
     templateUrl: 'app/routes/stop/stopTmpl.html',
     controller: 'stopCtrl'
+  })
+  .state('write', {
+    url: '/write',
+    templateUrl: 'app/routes/write/writeTmpl.html',
+    controller: 'writeCtrl'
   });
 
   // if err, route to dash, which will route to login with no auth

@@ -1,0 +1,20 @@
+<menu-bar></menu-bar>
+<h2>This is the my trips page.</h2>
+
+<form ng-hide="activeTrip" class="new-trip-form col-xs-12 form-inline">
+  <h3>Start a new trip: </h3>
+  <div class="form-group">
+    <label for="new-trip-name">New Trip Name</label>
+    <input ng-model="newTrip.name" id="new-trip-name" class="form-control" type="text" placeholder="Enter new trip name">
+  </div>
+  <div class="form-group">
+    <label for="new-trip-first-stop">First stop: </label>
+      <input ng-model="newTrip.firstStop" id="new-trip-first-stop" class="form-control" type="text" placeholder="Enter first stop">
+  </div>
+  <button ng-click="startTrip(newTrip)" class="btn">Start Trip</button>
+</form>
+
+<city-search></city-search>
+
+<h4>{{test}}</h4>
+<a ui-sref="trip({tripId: 1234})">Go to trip</a>

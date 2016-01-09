@@ -1,15 +1,23 @@
-<header class="header-bar">
+<header class="menu-bar">
   <div class="header-logo">
-    <h2>{{logoText}}</h2>
+    <h2>VIAJE</h2>
   </div>
   <div class="header-links">
-    <a href="#">Dashboard</a>
-    <a href="#">My Trips</a>
+    <a ui-sref="dash">Dashboard</a>
+    <span> - </span>
+    <a ui-sref="mytrips">My Trips</a>
   </div>
-  <button class="new-entry">
-    New Entry
-  </button>
-  <button class="log-out">
-    Log Out
-  </button>
+  <div class="header-buttons">
+    <!--only show when activeTrip = true-->
+    <button ui-sref="write" class="btn new-entry">
+      New Entry
+    </button>
+    <!--only show when activeTrip = true-->
+    <button ui-sref="mytrips" class="btn new-trip">
+      New Trip
+    </button>
+    <button class="btn log-out">
+      Log Out
+    </button>
+  </div>
 </header>

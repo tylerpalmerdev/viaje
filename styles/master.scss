@@ -1,0 +1,15 @@
+@import 'variables';
+
+/* ensure view-body takes up whole height of screen */
+.view-body {
+  height: 100%;
+  position: relative;
+}
+
+/* custom class to vertically align block elem in parent*/
+/* parent needs to have relative position*/
+.vertical-align {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
