@@ -1,23 +1,37 @@
 <header class="menu-bar">
-  <div class="header-logo">
-    <h2>VIAJE</h2>
+  <div class="first-half">
+    <div class="header-logo">
+      <h2>VIAJE</h2>
+    </div>
+    <div class="header-buttons">
+      <!--only show when activeTrip = true-->
+      <button ng-show="userData.onTrip" ui-sref="write" class="btn new-entry">
+        New Entry
+      </button>
+      <button ng-show="userData.onTrip" ui-sref="trip" class="btn new-entry">
+        New Stop
+      </button>
+      <!--only show when activeTrip = false-->
+      <button ng-hide="userData.onTrip" ui-sref="mytrips" class="btn new-trip">
+        New Trip
+      </button>
+    </div>
   </div>
-  <div class="header-links">
-    <a ui-sref="dash">Dashboard</a>
-    <span> - </span>
-    <a ui-sref="mytrips">My Trips</a>
-  </div>
-  <div class="header-buttons">
-    <!--only show when activeTrip = true-->
-    <button ui-sref="write" class="btn new-entry">
-      New Entry
-    </button>
-    <!--only show when activeTrip = true-->
-    <button ui-sref="mytrips" class="btn new-trip">
-      New Trip
-    </button>
-    <button class="btn log-out">
-      Log Out
-    </button>
+
+  <div class="second-half">
+    <div class="header-text">
+      <span>Logged in as {{userData.name}}</span>
+      <span ng-hide="userData.onTrip">Not currently on a trip.</span>
+      <span ng-show="userData.onTrip">Current Location: {{userData.currLoc}}</span>
+    </div>
+
+
+    <div class="header-links">
+      <a ui-sref="dash">Dashboard</a>
+      <span> - </span>
+      <a ui-sref="mytrips">My Trips</a>
+      <span> - </span>
+      <a ui-sref="mytrips">Log Out</a>
+    </div>
   </div>
 </header>

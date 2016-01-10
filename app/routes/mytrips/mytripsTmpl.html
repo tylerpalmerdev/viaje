@@ -1,6 +1,6 @@
-<menu-bar></menu-bar>
+<menu-bar user-data="userData"></menu-bar>
 <h2>This is the my trips page.</h2>
-
+<h4>{{test}}</h4>
 <form ng-hide="activeTrip" class="new-trip-form col-xs-12 form-inline">
   <h3>Start a new trip: </h3>
   <div class="form-group">
@@ -8,13 +8,15 @@
     <input ng-model="newTrip.name" id="new-trip-name" class="form-control" type="text" placeholder="Enter new trip name">
   </div>
   <div class="form-group">
-    <label for="new-trip-first-stop">First stop: </label>
-      <input ng-model="newTrip.firstStop" id="new-trip-first-stop" class="form-control" type="text" placeholder="Enter first stop">
+    <label for="place-search-input">First stop: </label>
+      <city-search city-data="cityData"></city-search>
   </div>
   <button ng-click="startTrip(newTrip)" class="btn">Start Trip</button>
 </form>
 
-<city-search></city-search>
 
-<h4>{{test}}</h4>
+
+<p>
+  {{cityData}}
+</p>
 <a ui-sref="trip({tripId: 1234})">Go to trip</a>

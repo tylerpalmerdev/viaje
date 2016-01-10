@@ -1,4 +1,11 @@
-trvlApp.controller('mytripsCtrl', function($scope) {
+trvlApp.controller('mytripsCtrl', function($scope, currAuth, currUserSvc) {
   $scope.test = 'Mytrips ctrl connected!';
-  $scope.activeTrip = false;
+
+  currUserSvc.getCurrUserData(currAuth.uid)
+  .then(
+    function(response) {
+      $scope.userData = response;
+    }
+  );
+
 });

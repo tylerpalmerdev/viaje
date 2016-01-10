@@ -1,4 +1,4 @@
-trvlApp.service('userSvc', function($firebaseArray, $firebaseObject, constants) {
+trvlApp.service('userSvc', function($firebaseArray, $firebaseObject, $q, constants) {
   var baseRef = new Firebase(constants.fbBaseUrl);
 
   this.addNewUserData = function(uid, newUserObj) {
@@ -10,7 +10,18 @@ trvlApp.service('userSvc', function($firebaseArray, $firebaseObject, constants) 
   };
 
   this.getUserRefObj = function(uid) {
+    var def = $q.defer();
     var userRef = new Firebase(constants.fbBaseUrl + '/users/' + uid);
-    return $firebaseObject(userRef);
+    $firebaseObject(userRef).$loaded()
+    .then(
+      function(response) {
+        def.resolve(response);
+      },
+      function(err) {
+        def.reject(err);
+      }
+    );
+    return def.promise;
   };
+  
 });

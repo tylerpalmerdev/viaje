@@ -35,25 +35,18 @@ trvlApp.service('authSvc', function($firebaseObject, $firebaseArray, $firebaseAu
 
   // login exisiting user
   this.login = function(userObj) {
-    authObj.$authWithPassword(userObj)
-    .then(
-      function(response) {
-        console.log('User logged in. redirecting to dash.');
-        $state.go('dash');
-      },
-      function(err) {
-        console.log('Login failed: ', err);
-      }
-    );
+    return authObj.$authWithPassword(userObj);
   };
 
   // get current auth status of user, e.g. to see if they can go to route
   this.getCurrentAuth = function() {
-    return $firebaseAuth(ref);
+    return $firebaseAuth(baseRef);
   };
 
   // sign out user
   this.signOut = function() {
     $firebaseAuth(baseRef).$unauth();
+    $state.go('login');
+    console.log('user logged out!');
   };
 });

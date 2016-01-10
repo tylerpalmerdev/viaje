@@ -7,7 +7,16 @@ trvlApp.controller('loginCtrl', function($scope, $state, authSvc, constants) {
   };
 
   $scope.login = function(userObj) {
-    authSvc.login(userObj);
+    authSvc.login(userObj)
+    .then(
+      function(response) {
+        console.log('User logged in. redirecting to dash.');
+        $state.go('dash');
+      },
+      function(err) {
+        console.log('Login failed: ', err);
+      }
+    );
   };
 
   $scope.signup = function(newUserObj) {

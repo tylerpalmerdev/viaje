@@ -6,6 +6,7 @@ $menu-height: 60px;
 $menu-padding: 20px;
 $menu-logo-flex-grow: 3;
 $menu-links-padding: 7px;
+$menu-item-border: 2px solid white;
 
 .menu-bar {
   width: 100%;
@@ -15,29 +16,53 @@ $menu-links-padding: 7px;
   justify-content: space-between;
   align-items: center;
   background-color: $menu-color;
+  color: $menu-text-color;
   padding: $menu-padding;
 
-  .header-logo {
-    float: left;
-    flex-grow: $menu-logo-flex-grow;
+  .first-half {
+    display: flex;
+    flex-flow: row nowrap;
 
-    h2 {
-      margin: 0;
-      color: $menu-text-color;
+    .header-logo {
+      flex-grow: 2;
+
+      h2 {
+        margin: 0;
+      }
+    }
+
+    .header-buttons {
+      margin-left: 25px;
+      button {
+        background-color: $menu-color;
+        border: $menu-item-border;
+        margin: 0 $button-margin;
+      }
     }
   }
 
-  .header-links {
-    a {
-      color: $menu-text-color;
+  .second-half{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+
+    .header-text {
+      border-right: $menu-item-border;
+      margin: 0 $button-margin;
+      padding: 0 $menu-padding;
+      span {
+        display: block;
+        font-style: italic;
+        text-align: right;
+      }
+    }
+
+    .header-links {
+      a {
+        color: $menu-text-color;
+        text-decoration: underline;
+      }
     }
   }
 
-  .header-buttons {
-    float: right;
-
-    button {
-      margin-left: $button-margin;
-    }
-  }
 }
