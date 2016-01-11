@@ -10,13 +10,18 @@ trvlApp.service('tripSvc', function($firebaseArray, $firebaseObject, constants) 
   // get all trips for user, based on uid
   this.getTripsForUser = function(uid) {
     var userTripsRef = rootRef.child(uid); // get fb ref
-    return $firebaseArray(userTripsRef); // get all trips arr
+    return $firebaseArray(userTripsRef).$loaded(); // return promise of getting all trips
   };
 
-  this.addTrip = function(userId, tripObj) {
-    tripObj.startTimestamp = new Date().toString();
-    var tripsForUser = this.getTripsForUser(userId);
-    return tripsForUser.$add(tripObj); // adds trip obj, returns promise
+  this.addNewTrip = function(userId, tripObj) {
+    // if new/active trip, add timestamp for start, end is undefined
+    if(tripObj.isActive) {
+      tripObj.startTimestamp = new Date().toString();
+    }
+
+    var users = $firebaseArray(rootRef.child(userId));
+
+    return users.$add(tripObj);
   };
 
   // get most recent trip of user

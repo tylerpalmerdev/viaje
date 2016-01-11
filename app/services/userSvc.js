@@ -1,4 +1,4 @@
-trvlApp.service('userSvc', function($firebaseArray, $firebaseObject, constants) {
+trvlApp.service('userSvc', function($firebaseArray, $firebaseObject, $q, constants) {
   /*
   RESPONSIBILITY: adding, getting, and deleting data from /users/ in fb
   NO INTERNAL SERVICE DEPENDENCIES (except for constants)
@@ -31,13 +31,23 @@ trvlApp.service('userSvc', function($firebaseArray, $firebaseObject, constants) 
   };
 
   // set val of userObj.onTrip (true or false)
-  this.isUserOnTrip = function(uid, bool) {
-    this.getUserRefObj(uid) // request user ref object
+  this.changeUserOnTrip = function(uid, bool) {
+    // get user obj w/ ref from uid
+    var def = $q.defer();
+    var userObj = $firebaseObject(baseRef.child(uid));
+    userObj.$loaded() // wait until object has loaded
     .then(
       function(response) { // when loaded
-        response.onTrip = bool; //onTrip property to true
-        return response.$save(); // save obj
-      }
+        // console.log(response);
+        // var loadedUserObj = response;
+        userObj.onTrip = bool; //onTrip property to T/F XX
+        userObj.$save();
+        def.resolve('user obj.onTrip updated to ' + bool); // save obj, return promise
+      },
+      constants.rejectLog
     );
+    return def.promise;
   };
+
+//BOTTOM
 });

@@ -1,7 +1,6 @@
 trvlApp.controller('citySearchCtrl', function($scope, constants) {
   $scope.test = 'Two way directive pass';
 
-
   // set bounds of search to the whole world
   var bounds = new google.maps.LatLngBounds(
     new google.maps.LatLng(-90, -180),

@@ -3,7 +3,8 @@ trvlApp.directive('menuBar', function() {
     templateUrl: 'app/directives/menuBar/menuBarTmpl.html',
     restrict: 'E',
     scope: {
-      userData: '='
+      userData: '=',
+      tripData: '='
     },
     controller: 'menuBarCtrl'
   };

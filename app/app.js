@@ -6,6 +6,7 @@ var authCheck = function(authSvc, $firebaseAuth) {
   return authSvc.getCurrentAuth().$requireAuth();
 };
 
+/*
 // event listener to console.log route changes
 trvlApp.run(function($rootScope) {
   $rootScope.$on('$stateChangeStart',
@@ -14,6 +15,7 @@ trvlApp.run(function($rootScope) {
     }
   );
 });
+*/
 
 // config angular app with routes, using $stateProvider
 trvlApp.config(function($stateProvider, $urlRouterProvider) {

@@ -1,3 +1,24 @@
-<menu-bar></menu-bar>
-<h2>This is the trip page.</h2>
-<a ui-sref="stop({stopId: 'abcd'})">Go to stop</a>
+<menu-bar user-data="userData" trip-data="tripData"></menu-bar>
+<h2>This is the trip detail page.</h2>
+<h4>Trip: {{tripData.latestTrip.name}}</h4>
+<!-- ng-hide this button if the trip on the page is not the current trip-->
+<button ng-click="endCurrentTrip()" type="button" name="button" class="btn">End Trip</button>
+<form class="new-trip-form col-sm-12 form-inline">
+  <h3>Add a new stop to trip (assumes you just arrived there): </h3>
+  <div class="form-group">
+    <label for="place-search-input">Stop: </label>
+    <city-search city-data="newStopObj.stopData"></city-search>
+  </div>
+  <div class="form-group">
+    <label for="arrive-date-input">Arrive: </label>
+    <input type="date" ng-model="newStopObj.arriveTimestamp" value="" id="arrive-date-input">
+  </div>
+  <div class="form-group">
+    <label for="depart-date-input">Depart: </label>
+    <input type="date" ng-model="newStopObj.departTimestamp" value="" id="depart-date-input">
+  </div>
+  <button ng-click="addStopToTrip(currTripId, newStopObj)" class="btn">Add Stop</button>
+</form>
+<div ng-repeat="stops in stopData.allStops">
+
+</div>

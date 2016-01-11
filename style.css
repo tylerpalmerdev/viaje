@@ -98,3 +98,8 @@
 #user-access-form p {
   text-align: center;
 }
+
+.trip-box {
+  border: 2px solid black;
+  margin: 10px;
+}

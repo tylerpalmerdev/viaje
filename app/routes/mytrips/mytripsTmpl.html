@@ -1,8 +1,19 @@
-<div class="view-body container-fluid">
-  <menu-bar user-data="userData"></menu-bar>
-  <h2>This is the my trips page.</h2>
-  <h4>{{test}}</h4>
-  <form ng-hide="activeTrip" class="new-trip-form col-xs-12 form-inline">
+<div class="view-body">
+  <menu-bar user-data="userData" trip-data="tripData"></menu-bar>
+  <div class="page-heading col-sm-3">
+    <h1>MY TRIPS</h1>
+  </div>
+  <div ng-hide="userData.onTrip" class="latest-trip-info col-sm-3">
+    <h5>Not currently on a trip.</h5>
+    <span>Latest trip: {{tripData.latestTrip.name}}</span>
+  </div>
+  <div ng-show="userData.onTrip" class="current-trip-info ">
+    <span>Current Trip:  {{tripData.latestTrip.name}}</span>
+    <button ng-click="endCurrentTrip()" type="button" name="button" class="btn">End Trip</button>
+  </div>
+
+
+  <form ng-hide="userData.onTrip" class="new-trip-form col-sm-12 form-inline">
     <h3>Start a new trip, when you've arrived to first stop: </h3>
     <div class="form-group">
       <label for="new-trip-name">New Trip Name</label>
@@ -14,13 +25,16 @@
     </div>
     <button ng-click="startTrip(newTrip, firstStopObj)" class="btn">Start Trip</button>
   </form>
-  <div class="tripBox" ng-repeat="trip in allUserTrips">
-    <p>
-      Name: {{trip.name}}
-    </p>
-    <p>
-      Current Location: {{trip.firstStop.placeString}}
-    </p>
+
+
+  <div class="trip-box-container col-xs-12">
+    <div class="trip-box col-xs-12 col-sm-2 col-md-3 col-lg-4" ng-repeat="trip in tripData.allTrips">
+      <p>
+        Name: {{trip.name}}
+      </p>
+      <p>
+        <a ui-sref="trip({tripId: trip.$id})" href="">Go To Trip Page</a>
+      </p>
+    </div>
   </div>
-  <a ui-sref="trip({tripId: 1234})">Go to trip</a>
 </div>

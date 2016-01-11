@@ -1,11 +1,11 @@
-trvlApp.controller('dashCtrl', function($scope, $state, currAuth, userSvc) {
+trvlApp.controller('dashCtrl', function($scope, $state, currAuth, opsSvc) {
 
   // get data for current user on dash
-  userSvc.getCurrUserData(currAuth.uid)
+  opsSvc.getCurrUserData(currAuth.uid)
   .then(
     function(response) {
       $scope.userData = response;
-      console.log("Final user obj sent to CTRL: ", response);
+      // console.log("Final user obj sent to dash CTRL: ", response);
     }
   );
 

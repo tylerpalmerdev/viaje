@@ -1,0 +1,7 @@
+$trip-box-border: 2px solid black;
+$trip-box-margin: 10px;
+
+.trip-box {
+  border: $trip-box-border;
+  margin: $trip-box-margin;
+}
