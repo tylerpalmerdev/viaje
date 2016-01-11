@@ -1,25 +1,19 @@
 // create angular app
 var trvlApp = angular.module('trvlApp', ['ui.router', 'firebase']);
 
+// auth check function to use with restricted views
 var authCheck = function(authSvc, $firebaseAuth) {
   return authSvc.getCurrentAuth().$requireAuth();
 };
 
-// reverse promise! reject when user is logged in so they cant go to login page
-var isLoggedOut = function(authSvc, $firebaseAuth, $q) {
-  var def = $q.defer();
-  authSvc.getCurrentAuth().$requireAuth()
-  .then(
-    function(response) { // if user is logged in
-
-      def.reject('User is logged in, routing back to dash.');
-    },
-    function(err) {
-      def.resolve(err);
+// event listener to console.log route changes
+trvlApp.run(function($rootScope) {
+  $rootScope.$on('$stateChangeStart',
+    function(e, toState, toParams, fromState, fromParams) {
+      console.log('State Changed from ', fromState.name, ' to ', toState.name);
     }
   );
-  return def.promise;
-};
+});
 
 // config angular app with routes, using $stateProvider
 trvlApp.config(function($stateProvider, $urlRouterProvider) {
@@ -27,7 +21,12 @@ trvlApp.config(function($stateProvider, $urlRouterProvider) {
   .state('login', {
     url: '/login',
     templateUrl: 'app/routes/login/loginTmpl.html',
-    controller: 'loginCtrl'
+    controller: 'loginCtrl',
+    resolve: {
+      isLoggedOut: function(authSvc) {
+        return authSvc.isLoggedOut();
+      }
+    }
   })
   .state('dash', {
     url: '/dash',
@@ -57,14 +56,6 @@ trvlApp.config(function($stateProvider, $urlRouterProvider) {
     url: '/stop/:stopId',
     templateUrl: 'app/routes/stop/stopTmpl.html',
     controller: 'stopCtrl',
-    resolve: {
-      currAuth: authCheck
-    }
-  })
-  .state('write', {
-    url: '/write',
-    templateUrl: 'app/routes/write/writeTmpl.html',
-    controller: 'writeCtrl',
     resolve: {
       currAuth: authCheck
     }

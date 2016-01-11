@@ -1,10 +1,17 @@
-trvlApp.controller('dashCtrl', function($scope, currAuth, currUserSvc) {
+trvlApp.controller('dashCtrl', function($scope, $state, currAuth, userSvc) {
 
-  currUserSvc.getCurrUserData(currAuth.uid)
+  // get data for current user on dash
+  userSvc.getCurrUserData(currAuth.uid)
   .then(
     function(response) {
       $scope.userData = response;
+      console.log("Final user obj sent to CTRL: ", response);
     }
   );
+
+  // when auth changes, go to login page
+  // currAuth.$onAuth(function(authData) {
+  //   $state.go('login');
+  // });
 
 });
