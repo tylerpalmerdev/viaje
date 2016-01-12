@@ -1,8 +1,8 @@
 trvlApp.controller('loginCtrl', function($scope, $state, authSvc, constants) {
-  $scope.test = 'Ctrl connected!';
+
   $scope.newuser = false; // default view: login, not new user reg
 
-  $scope.toggleForm = function() {
+  $scope.toggleForm = function() { 
     $scope.newuser = !$scope.newuser;
   };
 
@@ -11,7 +11,7 @@ trvlApp.controller('loginCtrl', function($scope, $state, authSvc, constants) {
     .then(
       function(response) {
         console.log('User logged in. redirecting to dash.');
-        $state.go('dash');
+        $state.go('mytrips');
       },
       function(err) {
         console.log('Login failed: ', err);
@@ -28,5 +28,4 @@ trvlApp.controller('loginCtrl', function($scope, $state, authSvc, constants) {
     );
   };
 
-  $scope.countries = constants.country_list;
 });

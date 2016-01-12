@@ -7,24 +7,9 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
   */
 
   /* SECTION 1 - GET ALL USER DATA FOR CTRL */
-  // pull current user data from userSvc
-  this.getCurrUserData = function(uid) {
-    var def = $q.defer();
-    var userData = {}; // passed to promise resolve with all data needed for scope
-    userSvc.getUserRefObj(uid) // get fb ref obj for user from userSvc
-    .then(
-      function(response) {
-        userData.name = response.name;
-        userData.uid = response.$id;
-        userData.onTrip = response.onTrip; // only one that will change, WATCH!
-        userData.homeCity = response.homeCity;
-        userData.userStats = response.userStats;
-        userData.email = response.email;
-        def.resolve(userData);
-      },
-      constants.rejectLog
-    );
-    return def.promise; // return promise of getting all data for uid
+  // pull current user data from userSvc, as it is in DB
+  this.getUserData = function(uid) {
+    return userSvc.getUserRefObj(uid);
   };
 
   // to be used by ctrl to update $scope data
@@ -97,18 +82,33 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
     return def.promise;
   };
 
+  this.getAllTripsForUser = function(uid) {
+    return tripSvc.getTripsForUser(uid);
+  };
 
-  this.endTripForUser = function(uid, tripid) {
+  // will do everything to end a trip, should only be used if trip.isActive = true
+  this.endTripForUser = function(uid, tripId) {
     var def = $q.defer();
+    var currTimestamp = Date.parse(new Date().toString()); // for setting end timestamps
     userSvc.changeUserOnTrip(uid, false) // set userObj.onTrip = false;
     .then(
       function(response) {
-        def.resolve(response);
+        console.log("changed user.onTrip to false");
+        return tripSvc.isTripActive(uid, tripId, false); // set trip.isActive to false
+      }
+    )
+    .then(
+      function(response) {
+        console.log("set trip to inactive.");
+        return tripSvc.setTripEndDate(uid, tripId, currTimestamp); // set trip end date to right now
+      }
+    )
+    .then(
+      function(response) {
+        console.log("set trip end date to ", currTimestamp);
+        def.resolve(response); // resolve promise with response from setting trip end date
       }
     );
-
-    // set departure date on last stop
-    // set end date on trip
 
     return def.promise;
   };
@@ -133,24 +133,30 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
     );
   };
 
-  /* SECTION 3 - OPS FOR TRIP CTRL */
+
+  /* SECTION 3 - OPS FOR TRIP DETAIL PAGE CTRL */
   this.getTripStopsData = function(tripId) {
     return stopSvc.getStopsForTrip(tripId);
   };
 
-  this.updateStopData = function(tripId, scope) {
-    this.getTripStopsData(tripId)
-    .then(
-      function(response) {
-        scope.stopData = response;
-      }
-    );
+  this.getFullTripData = function(tripId) {
+    /*
+    FOR EACH TRIP DETAIL PAGE:
+    var tripData = {
+      allStops: {} w/ details + ids, if stop.id = lastStop & currTrip = T, currLoc = stop
+      lastStop: stopId <-- stopSvc get last stop for
+      tripActive: T/F <-- if true, change view
+      tripName: tripSvc.getNameOfTrip(currAuth.uid, tripId);
+    }
+    */
   };
 
   this.addStopToTrip = function(tripId, stopObj) {
     // if they exist, parse dates into numerical timestamp to store in fb and parse in angular
     if (stopObj.arriveTimestamp) {
       stopObj.arriveTimestamp = Date.parse(stopObj.arriveTimestamp);
+    } else if (!stopObj.arriveTimestamp) { // if no arrive stamp, set to now
+      stopObj.arriveTimestamp = Date.parse(new Date().toString());
     }
 
     if (stopObj.departTimestamp) { // add depart date to object if it exists

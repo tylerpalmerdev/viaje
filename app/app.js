@@ -30,14 +30,6 @@ trvlApp.config(function($stateProvider, $urlRouterProvider) {
       }
     }
   })
-  .state('dash', {
-    url: '/dash',
-    templateUrl: 'app/routes/dash/dashTmpl.html',
-    controller: 'dashCtrl',
-    resolve: {
-      currAuth: authCheck
-    }
-  })
   .state('mytrips', {
     url: '/mytrips',
     templateUrl: 'app/routes/mytrips/mytripsTmpl.html',
@@ -50,14 +42,6 @@ trvlApp.config(function($stateProvider, $urlRouterProvider) {
     url: '/trip/:tripId',
     templateUrl: 'app/routes/trip/tripTmpl.html',
     controller: 'tripCtrl',
-    resolve: {
-      currAuth: authCheck
-    }
-  })
-  .state('stop', {
-    url: '/stop/:stopId',
-    templateUrl: 'app/routes/stop/stopTmpl.html',
-    controller: 'stopCtrl',
     resolve: {
       currAuth: authCheck
     }

@@ -24,7 +24,7 @@
     <button ng-click="startTrip(newTrip, firstStopObj)" class="btn">Start Trip</button>
   </form>
 
-  <div class="form-container col-xs-12">
+  <div class="form-container col-xs-12 col-sm-9 col-sm-offset-1">
     <form class="new-trip-form form-inline">
       <div class="form-heading-container">
         <h5>Add a completed trip:</h5>
@@ -45,16 +45,29 @@
         <button ng-click="addPastTrip(oldTripObj)" class="btn btn-primary">Add Trip</button>
       </div>
     </form>
+  </div>
 
-
-  <div class="trip-box-container col-xs-12">
-    <div class="trip-box col-xs-12 col-sm-2 col-md-3 col-lg-4" ng-repeat="trip in tripData.allTrips">
-      <p>
-        Name: {{trip.name}}
-      </p>
-      <p>
-        <a ui-sref="trip({tripId: trip.$id})" href="">Go To Trip Page</a>
-      </p>
+  <div class="panel-group col-xs-12 col-sm-8 col-sm-offset-2" id="accordion" role="tablist">
+    <div ng-repeat="trip in userTrips | orderBy: '+endTimestamp'" class="panel trip-panel panel-default">
+      <div class="panel-heading" role="tab" id="{{trip.name + '-panel-heading'">
+        <h4 class="panel-title">
+          <a href="{{'#' + trip.name + '-panel'}}" data-toggle="collapse" data-parent="#accordion">
+            {{trip.name}}
+          </a>
+        </h4>
+        <span>{{trip.startTimestamp | date: 'MM/dd/yyyy'}} - </span>
+        <span>{{trip.endTimestamp | date: 'MM/dd/yyyy'}}</span>
+      </div>
+      <div id="{{trip.name + '-panel'}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{trip.name + '-panel'}}">
+        <div class="panel-body">
+            <p>
+              Trip Stats
+            </p>
+            <a href="" ui-sref="trip({tripId: trip.$id})">Go To {{trip.name}} Trip Page</a>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
+
 </div>

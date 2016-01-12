@@ -2,7 +2,20 @@ trvlApp.controller('mytripsCtrl', function($scope, currAuth, opsSvc, constants) 
   $scope.test = 'Mytrips ctrl connected!';
 
   // update user data whenever view reloads. Alternative: 3-way data bind?
-  opsSvc.updateUserData(currAuth, $scope);
+  opsSvc.getUserData(currAuth.uid)
+  .then(
+    function(response) {
+      $scope.userData = response;
+    }
+  );
+
+  opsSvc.getAllTripsForUser(currAuth.uid)
+  .then(
+    function(response) {
+      $scope.userTrips = response;
+    }
+  );
+
   opsSvc.updateTripData(currAuth, $scope);
 
   $scope.startTrip = function(newTripObj, firstStopObj) {

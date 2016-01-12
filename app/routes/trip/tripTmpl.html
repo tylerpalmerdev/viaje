@@ -14,7 +14,7 @@
     </div>
     <div class="end-button-container">
         <button ng-click="toggleForm()" type="button" name="button" class="btn btn-danger">Add Stop</button>
-        <button ng-click="endCurrentTrip()" type="button" name="button" class="btn btn-danger">End Trip</button>
+        <button ng-show="userData.onTrip" ng-click="endCurrentTrip()" type="button" name="button" class="btn btn-danger">End Trip</button>
     </div>
   </div>
 

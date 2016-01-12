@@ -5,15 +5,7 @@ trvlApp.service('authSvc', function($firebaseObject, $firebaseArray, $firebaseAu
   var authObj = $firebaseAuth(baseRef);
   var users = $firebaseArray(usersRef);
 
-  // help's determine what form is shown in login view
-  this.newUser = false;
-
-  // event listener to keep track of auth state:
-  // authObj.$onAuth(function(authData) {
-  //   console.log('Auth status changed (see authObj.$onAuth in authSvc)', authData);
-  // });
-
-  // register new user [REFACTOR TO REGISTER & SIGN IN AT SAME TIME AND ROUTE TO DASH]
+  // register new user [REFACTOR TO REGISTER & SIGN IN AT SAME TIME AND ROUTE TO MYTRIPS]
   this.register = function(newUserObj) {
     var def = $q.defer(); // create defer obj
     authObj.$createUser(newUserObj) // create new user in fb auth
@@ -49,7 +41,7 @@ trvlApp.service('authSvc', function($firebaseObject, $firebaseArray, $firebaseAu
     return $firebaseAuth(baseRef);
   };
 
-  // new get current auth status of user, returns promise that rejects if user logged out [REFACTOR INTO ONE FUNCTION FOR ALL ROUTES]
+  // new get current auth status of user, returns promise that rejects if user logged out [REFACTOR WITH CURR AUTH FCN INTO ONE CHECK AUTH FUNCTION FOR ALL ROUTES THAT RESOLVES IF LOGGED IN REJECTS IF LOGGED OUT]
   this.isLoggedOut = function() {
     var auth = $firebaseAuth(baseRef); // get auth obj
     var def = $q.defer(); // create deferrer

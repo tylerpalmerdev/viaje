@@ -28,9 +28,30 @@ trvlApp.service('tripSvc', function($firebaseArray, $firebaseObject, constants) 
     return trips.$add(tripObj); // return promise
   };
 
-  // get most recent trip of user
-  this.getLatestTripOfUser = function(uid) {
-    var userTrips = getTripsForUser(uid);
-    return userTrips[userTrips.length - 1]; // return last item in array
+  this.getTripObj = function(userId, tripId) {
+    return $firebaseObject(rootRef.child(userId + '/' + tripId));
   };
+
+  this.isTripActive = function(userId, tripId, bool) {
+    var tripObj = this.getTripObj(userId, tripId);
+    tripObj.$loaded() // when trip object loads
+    .then(
+      function(response) {
+        tripObj.isActive = bool;
+        return tripObj.$save(); // returns promise of setting tripObj.isActive as bool
+      }
+    );
+  };
+
+  this.setTripEndDate = function(userId, tripId, endDate) { // end date in ms
+    var tripObj = this.getTripObj(userId, tripId);
+    tripObj.$loaded()
+    .then(
+      function(response) {
+        tripObj.endDate = endDate;
+        return tripObj.$save(); // return promise of setting tripObj.endDate to endDate provided
+      }
+    );
+  };
+
 });
