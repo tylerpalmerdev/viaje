@@ -124,19 +124,18 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
   };
 
   this.addCompletedTripForUser = function(uid, tripObj) {
-
+    tripObj.isActive = false;
+    tripSvc.addNewTrip(uid, tripObj)
+    .then(
+      function(response) {
+        console.log(response);
+      }
+    );
   };
 
   /* SECTION 3 - OPS FOR TRIP CTRL */
   this.getTripStopsData = function(tripId) {
-    var def = $q.defer();
-    stopSvc.getStopsForTrip(tripId)
-    .then(
-      function(response) {
-        return response;
-      }
-    );
-    return def.promise;
+    return stopSvc.getStopsForTrip(tripId);
   };
 
   this.updateStopData = function(tripId, scope) {
@@ -149,11 +148,14 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
   };
 
   this.addStopToTrip = function(tripId, stopObj) {
-    // if stop doesn't have an arrival date, set as today
-    if (!stopObj.arriveTimestamp) {
-      stopObj.arrivalTimestamp = new Date().toString();
+    // if they exist, parse dates into numerical timestamp to store in fb and parse in angular
+    if (stopObj.arriveTimestamp) {
+      stopObj.arriveTimestamp = Date.parse(stopObj.arriveTimestamp);
     }
 
+    if (stopObj.departTimestamp) { // add depart date to object if it exists
+      stopObj.departTimestamp = Date.parse(stopObj.departTimestamp);
+    }
     stopSvc.addStop(tripId, stopObj)
     .then(
       function(response) {

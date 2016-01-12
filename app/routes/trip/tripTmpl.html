@@ -1,24 +1,67 @@
-<menu-bar user-data="userData" trip-data="tripData"></menu-bar>
-<h2>This is the trip detail page.</h2>
-<h4>Trip: {{tripData.latestTrip.name}}</h4>
-<!-- ng-hide this button if the trip on the page is not the current trip-->
-<button ng-click="endCurrentTrip()" type="button" name="button" class="btn">End Trip</button>
-<form class="new-trip-form col-sm-12 form-inline">
-  <h3>Add a new stop to trip (assumes you just arrived there): </h3>
-  <div class="form-group">
-    <label for="place-search-input">Stop: </label>
-    <city-search city-data="newStopObj.stopData"></city-search>
+<div class="view-body">
+  <menu-bar user-data="userData" trip-data="tripData"></menu-bar>
+  <div class="trip-info-container row">
+    <div class="trip-heading-container">
+      <h2>{{tripData.latestTrip.name}}</h2>
+      <h4>Trip Status: <span class="active">ACTIVE</span></h4> <!--hide if not on current trip page-->
+      <!-- <h4>Status: <span class="completed">COMPLETED</span></h4> <!--show if not on current trip page-->
+
+    </div>
+    <div class="trip-stats">
+      <p><strong>Stops: </strong> {{currTripStats.stops}} </p>
+      <p><strong>Countries: </strong>{{currTripStats.countries}}</p>
+      <p><strong>Distance: </strong>{{currTripStats.distance}}</p>
+    </div>
+    <div class="end-button-container">
+        <button ng-click="toggleForm()" type="button" name="button" class="btn btn-danger">Add Stop</button>
+        <button ng-click="endCurrentTrip()" type="button" name="button" class="btn btn-danger">End Trip</button>
+    </div>
   </div>
-  <div class="form-group">
-    <label for="arrive-date-input">Arrive: </label>
-    <input type="date" ng-model="newStopObj.arriveTimestamp" value="" id="arrive-date-input">
+
+  <!-- ng-hide this button if the trip on the page is not the current trip-->
+  <div ng-show="showForm" class="form-container col-xs-12">
+    <form class="new-trip-form form-inline">
+      <div class="form-heading-container">
+        <h5>Add a new stop to {{tripData.latestTrip.name}} trip.</h5>
+        <h6>Select "Past Stop" to submit a stop for this trip that you have already completed.</h6>
+      </div>
+      <div class="form-group">
+        <label for="place-search-input">Stop: </label>
+        <city-search city-data="newStopObj.stopData"></city-search>
+      </div>
+      <div class="form-group">
+        <label for="is-stop-in-past-input">Past stop </label>
+        <input ng-model="pastStop" type="checkbox">
+      </div>
+      <div ng-show="pastStop" class="form-group">
+        <label for="arrive-date-input">Arrive: </label>
+        <input type="date" ng-model="newStopObj.arriveTimestamp"  id="arrive-date-input" require>
+      </div>
+      <div ng-show="pastStop" class="form-group">
+        <label for="depart-date-input">Depart: </label>
+        <input type="date" ng-model="newStopObj.departTimestamp"  id="depart-date-input">
+      </div>
+      <div class="button-group form-group">
+        <button ng-click="addStopToTrip(currTripId, newStopObj)" class="btn btn-primary">Add Stop</button>
+        <button ng-click="toggleForm()" class="btn">Cancel</button>
+      </div>
+    </form>
   </div>
-  <div class="form-group">
-    <label for="depart-date-input">Depart: </label>
-    <input type="date" ng-model="newStopObj.departTimestamp" value="" id="depart-date-input">
+
+  <div class="stop-box-container">
+    <div ng-repeat="stop in allStops | orderBy: '-departTimestamp'" class="stop-box col-xs-12 col-sm-6 col-md-4">
+      <div class="stop-wrapper">
+        <div class="stop-map-wrapper">
+          <img src="{{getMapUrl(stop.stopData.geo.lat, stop.stopData.geo.lng)}}"></img>
+        </div>
+        <div class="stop-details">
+          <p><strong>Place: </strong>{{stop.stopData.placeString}}</p>
+          <p><strong>Arrive Date: </strong>{{stop.arriveTimestamp | date: 'MM/dd/yyyy' }}</p>
+          <p><strong>Depart Date: </strong>{{stop.departTimestamp | date: 'MM/dd/yyyy'}}</p>
+          <button type="button" class="btn btn-warning">Delete Stop</button>
+        </div>
+      </div>
+    </div>
   </div>
-  <button ng-click="addStopToTrip(currTripId, newStopObj)" class="btn">Add Stop</button>
-</form>
-<div ng-repeat="stops in stopData.allStops">
 
 </div>

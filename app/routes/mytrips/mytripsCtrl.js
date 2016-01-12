@@ -26,8 +26,9 @@ trvlApp.controller('mytripsCtrl', function($scope, currAuth, opsSvc, constants) 
     );
   };
 
-  $scope.addPastTrip = function(pastTripObj, startDate, endDate, firstStop) {
-    //opsSvc.addPastTripForUser
+  $scope.addPastTrip = function(oldTripObj) {
+    opsSvc.addCompletedTripForUser(currAuth.uid, oldTripObj);
+    $scope.oldTripObj = {}; // reset for ang date input error
   };
 
 });

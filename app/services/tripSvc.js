@@ -16,12 +16,16 @@ trvlApp.service('tripSvc', function($firebaseArray, $firebaseObject, constants) 
   this.addNewTrip = function(userId, tripObj) {
     // if new/active trip, add timestamp for start, end is undefined
     if(tripObj.isActive) {
-      tripObj.startTimestamp = new Date().toString();
+      tripObj.startTimestamp = new Date().toString(); // save in DB in ms time string, for angular and firebase
     }
-
-    var users = $firebaseArray(rootRef.child(userId));
-
-    return users.$add(tripObj);
+    // if endTimestamp is present, change to ms
+    if(tripObj.endTimestamp) {
+      tripObj.endTimestamp = Date.parse(tripObj.endTimestamp.toString());
+    }
+    // no matter what, format start time stamp to ms
+    tripObj.startTimestamp = Date.parse(tripObj.startTimestamp.toString());
+    var trips = $firebaseArray(rootRef.child(userId));
+    return trips.$add(tripObj); // return promise
   };
 
   // get most recent trip of user

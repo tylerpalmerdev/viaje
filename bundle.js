@@ -280,19 +280,18 @@ trvlApp.service('opsSvc', ["constants", "$q", "userSvc", "tripSvc", "stopSvc", f
   };
 
   this.addCompletedTripForUser = function(uid, tripObj) {
-
+    tripObj.isActive = false;
+    tripSvc.addNewTrip(uid, tripObj)
+    .then(
+      function(response) {
+        console.log(response);
+      }
+    );
   };
 
   /* SECTION 3 - OPS FOR TRIP CTRL */
   this.getTripStopsData = function(tripId) {
-    var def = $q.defer();
-    stopSvc.getStopsForTrip(tripId)
-    .then(
-      function(response) {
-        return response;
-      }
-    );
-    return def.promise;
+    return stopSvc.getStopsForTrip(tripId);
   };
 
   this.updateStopData = function(tripId, scope) {
@@ -305,11 +304,14 @@ trvlApp.service('opsSvc', ["constants", "$q", "userSvc", "tripSvc", "stopSvc", f
   };
 
   this.addStopToTrip = function(tripId, stopObj) {
-    // if stop doesn't have an arrival date, set as today
-    if (!stopObj.arriveTimestamp) {
-      stopObj.arrivalTimestamp = new Date().toString();
+    // if they exist, parse dates into numerical timestamp to store in fb and parse in angular
+    if (stopObj.arriveTimestamp) {
+      stopObj.arriveTimestamp = Date.parse(stopObj.arriveTimestamp);
     }
 
+    if (stopObj.departTimestamp) { // add depart date to object if it exists
+      stopObj.departTimestamp = Date.parse(stopObj.departTimestamp);
+    }
     stopSvc.addStop(tripId, stopObj)
     .then(
       function(response) {
@@ -335,10 +337,10 @@ trvlApp.service('stopSvc', ["constants", "$firebaseArray", "$firebaseObject", fu
   this.addStop = function(tripId, stopObj) {
     // later, in trip svc, add stopId to trip.stops array
     var stopsForTrip = this.getStopsForTrip(tripId);
-    // stopObj.stopName = stopObj.data.placeString;
-    stopObj.arrivalTimestamp = new Date().toString(); // or different data if in past
+    if (!stopObj.arriveTimestamp) {
+      stopObj.arriveTimestamp = Date.parse(new Date().toString());
+    }
     return stopsForTrip.$add(stopObj); // stop to trip and return promise
-    // change current stop to newly added stop
   };
 
   this.getLatestStopOfTrip = function(tripId) {
@@ -347,7 +349,7 @@ trvlApp.service('stopSvc', ["constants", "$firebaseArray", "$firebaseObject", fu
   };
 
   this.deleteStop = function(tripId, stopId) {
-    // delete stop from DB
+    console.log(tripId, stopId);
   };
 
 }]);
@@ -370,12 +372,16 @@ trvlApp.service('tripSvc', ["$firebaseArray", "$firebaseObject", "constants", fu
   this.addNewTrip = function(userId, tripObj) {
     // if new/active trip, add timestamp for start, end is undefined
     if(tripObj.isActive) {
-      tripObj.startTimestamp = new Date().toString();
+      tripObj.startTimestamp = new Date().toString(); // save in DB in ms time string, for angular and firebase
     }
-
-    var users = $firebaseArray(rootRef.child(userId));
-
-    return users.$add(tripObj);
+    // if endTimestamp is present, change to ms
+    if(tripObj.endTimestamp) {
+      tripObj.endTimestamp = Date.parse(tripObj.endTimestamp.toString());
+    }
+    // no matter what, format start time stamp to ms
+    tripObj.startTimestamp = Date.parse(tripObj.startTimestamp.toString());
+    var trips = $firebaseArray(rootRef.child(userId));
+    return trips.$add(tripObj); // return promise
   };
 
   // get most recent trip of user
@@ -608,26 +614,43 @@ trvlApp.controller('mytripsCtrl', ["$scope", "currAuth", "opsSvc", "constants", 
     );
   };
 
-  $scope.addPastTrip = function(pastTripObj, startDate, endDate, firstStop) {
-    //opsSvc.addPastTripForUser
+  $scope.addPastTrip = function(oldTripObj) {
+    opsSvc.addCompletedTripForUser(currAuth.uid, oldTripObj);
+    $scope.oldTripObj = {}; // reset for ang date input error
   };
 
 }]);
 
 trvlApp.controller('tripCtrl', ["$scope", "$stateParams", "currAuth", "opsSvc", function($scope, $stateParams, currAuth, opsSvc) {
-
-  $scope.test = 'Mytrips ctrl connected!';
+  // for UI
+  $scope.currTripStats = {
+    countries: 2,
+    stops: 5,
+    distance: "1,545 mi"
+  };
+  $scope.showForm = false; // hide new stop form by default
+  $scope.toggleForm = function() {
+    $scope.showForm = !$scope.showForm;
+  };
+  // THE MAP IMG + THIS SHOULD BE A CUSTOM DIRECTIVE
+  $scope.getMapUrl = function(lat, lon) {
+    var mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + lat + "," + lon + "&zoom=11&size=145x145&maptype=roadmap&key=AIzaSyBGfrzCswijyHNboZzf6WIKYIrg33FFHiE";
+    return mapUrl;
+  };
 
   // update user data whenever view reloads. Alternative: 3-way data bind?
   opsSvc.updateUserData(currAuth, $scope);
   opsSvc.updateTripData(currAuth, $scope);
 
   // since you are on a trip detail page, url has tripId param
-  $scope.currTripId = $stateParams.tripId; // make ID available on scope
+  $scope.currTripId = $stateParams.tripId;
+  $scope.allStops = opsSvc.getTripStopsData($stateParams.tripId);
 
   $scope.addStopToTrip = function(tripId, stopObj) {
-    console.log(tripId, stopObj);
-    // opsSvc.addStopToTrip(tripId, stopObj);
+    opsSvc.addStopToTrip(tripId, stopObj);
+    // clear dates after clicking due to angular ng-model/ date input error
+    stopObj.departTimestamp = undefined;
+    stopObj.arriveTimestamp = undefined;
   };
 
   $scope.endCurrentTrip = function() {

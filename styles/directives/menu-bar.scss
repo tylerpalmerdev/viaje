@@ -1,6 +1,6 @@
 @import '../variables';
 
-$menu-color: #355DBF;
+$menu-color: $form-color;
 $menu-text-color: white;
 $menu-height: 60px;
 $menu-padding: 20px;
@@ -65,4 +65,10 @@ $menu-item-border: 2px solid white;
     }
   }
 
+}
+
+@media screen and (max-width: 650px) {
+  .header-text {
+    display: none;
+  }
 }

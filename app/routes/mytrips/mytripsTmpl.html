@@ -9,9 +9,7 @@
   </div>
   <div ng-show="userData.onTrip" class="current-trip-info ">
     <span>Current Trip:  {{tripData.latestTrip.name}}</span>
-    <button ng-click="endCurrentTrip()" type="button" name="button" class="btn">End Trip</button>
   </div>
-
 
   <form ng-hide="userData.onTrip" class="new-trip-form col-sm-12 form-inline">
     <h3>Start a new trip, when you've arrived to first stop: </h3>
@@ -25,6 +23,28 @@
     </div>
     <button ng-click="startTrip(newTrip, firstStopObj)" class="btn">Start Trip</button>
   </form>
+
+  <div class="form-container col-xs-12">
+    <form class="new-trip-form form-inline">
+      <div class="form-heading-container">
+        <h5>Add a completed trip:</h5>
+      </div>
+      <div class="form-group">
+        <label for="old-trip-name">New Trip Name</label>
+        <input ng-model="oldTripObj.name" id="old-trip-name" class="form-control" type="text" placeholder="Enter a trip name">
+      </div>
+      <div class="form-group">
+        <label for="start-date-input">Start Date: </label>
+        <input type="date" ng-model="oldTripObj.startTimestamp" id="start-date-input">
+      </div>
+      <div class="form-group">
+        <label for="end-date-input">End Date: </label>
+        <input type="date" ng-model="oldTripObj.endTimestamp" id="end-date-input">
+      </div>
+      <div class="button-group form-group">
+        <button ng-click="addPastTrip(oldTripObj)" class="btn btn-primary">Add Trip</button>
+      </div>
+    </form>
 
 
   <div class="trip-box-container col-xs-12">

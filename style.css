@@ -21,7 +21,7 @@
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
-  background-color: #355DBF;
+  background-color: #00898f;
   color: white;
   padding: 20px;
 }
@@ -44,7 +44,7 @@
 }
 
 .menu-bar .first-half .header-buttons button {
-  background-color: #355DBF;
+  background-color: #00898f;
   border: 2px solid white;
   margin: 0 15px;
 }
@@ -72,6 +72,12 @@
   text-decoration: underline;
 }
 
+@media screen and (max-width: 650px) {
+  .header-text {
+    display: none;
+  }
+}
+
 /*VARIABLES*/
 /* for view-body on login page */
 .full-screen-photo {
@@ -80,7 +86,7 @@
 }
 
 #user-access-form {
-  background-color: #d3d3d3;
+  background-color: #00898f;
   border-radius: 5px;
   padding-bottom: 20px;
 }
@@ -102,4 +108,39 @@
 .trip-box {
   border: 2px solid black;
   margin: 10px;
+}
+
+/*VARIABLES*/
+.trip-info-container {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.trip-info-container .trip-heading-container {
+  margin-left: 20px;
+}
+
+.trip-info-container .trip-heading-container h2 {
+  margin: 0;
+}
+
+.stop-box {
+  padding: 10px;
+}
+
+.stop-box .stop-wrapper {
+  background-color: #00898f;
+  color: white;
+  border-radius: 3px;
+  height: 200px;
+  display: flex;
+  flex-grow: row nowrap;
+  align-items: center;
+}
+
+.stop-box .stop-wrapper img, .stop-box .stop-wrapper .stop-details {
+  margin-left: 15px;
 }

@@ -13,10 +13,10 @@ trvlApp.service('stopSvc', function(constants, $firebaseArray, $firebaseObject) 
   this.addStop = function(tripId, stopObj) {
     // later, in trip svc, add stopId to trip.stops array
     var stopsForTrip = this.getStopsForTrip(tripId);
-    // stopObj.stopName = stopObj.data.placeString;
-    stopObj.arrivalTimestamp = new Date().toString(); // or different data if in past
+    if (!stopObj.arriveTimestamp) {
+      stopObj.arriveTimestamp = Date.parse(new Date().toString());
+    }
     return stopsForTrip.$add(stopObj); // stop to trip and return promise
-    // change current stop to newly added stop
   };
 
   this.getLatestStopOfTrip = function(tripId) {
@@ -25,7 +25,7 @@ trvlApp.service('stopSvc', function(constants, $firebaseArray, $firebaseObject) 
   };
 
   this.deleteStop = function(tripId, stopId) {
-    // delete stop from DB
+    console.log(tripId, stopId);
   };
 
 });

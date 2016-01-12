@@ -1,0 +1,41 @@
+@import '../variables';
+
+$trip-info-margin: 20px;
+$stop-box-border: 1px solid black;
+$stop-box-height: 200px; // same as map
+$stop-box-internal-margin: 15px;
+
+.trip-info-container {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: $trip-info-margin;
+
+  .trip-heading-container {
+    margin-left: $trip-info-margin;
+
+    h2 {
+      margin: 0;
+    }
+  }
+}
+
+.stop-box {
+  padding: 10px;
+
+  .stop-wrapper {
+    // border: $stop-box-border;
+    background-color: $form-color;
+    color: white;
+    border-radius: $master-border-radius - 2px;
+    height: $stop-box-height;
+    display: flex;
+    flex-grow: row nowrap;
+    align-items: center;
+
+    img, .stop-details  {
+      margin-left: $stop-box-internal-margin;
+    }
+  }
+}
