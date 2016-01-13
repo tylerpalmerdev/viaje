@@ -26,7 +26,8 @@ trvlApp.controller('mytripsCtrl', function($scope, currAuth, opsSvc, constants) 
     opsSvc.startTripForUser(currAuth.uid, newTripObj, firstStopObj)
     .then( // after trip is started:
       function(response) {
-        opsSvc.getUserData(currAuth.uid, $scope);  // update $scope.userData
+        opsSvc.getUserData(currAuth.uid, $scope);
+        opsSvc.getCurrData(currAuth.uid, $scope);  // update $scope.userData
       }
     );
   };
