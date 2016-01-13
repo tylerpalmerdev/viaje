@@ -32,12 +32,14 @@ trvlApp.service('stopSvc', function(constants, $firebaseArray, $firebaseObject) 
   };
 
   this.setStopDepartDate = function(tripId, stopId, date) { // date in ms
-    getStop(tripId, stopId)
+    var stopObj = $firebaseObject(rootRef.child(tripId + "/" + stopId));
+    // this.getStop(tripId, stopId)
+    stopObj.$loaded() // stopObj is promise that object will load
     .then(
       function(response) {
-        var stopObj = response;
+        // var stopObj = response;
         stopObj.departTimestamp = date;
-        return stopObj.$save(); // return promise of saving object with new depart date
+        return stopObj.$save(); // PROMISE
       }
     );
   };

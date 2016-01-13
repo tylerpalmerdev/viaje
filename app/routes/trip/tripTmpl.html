@@ -18,6 +18,15 @@
           <button ng-show="tripData.isActive" ng-click="endCurrentTrip()" type="button" name="button" class="btn btn-warn">End Trip</button>
           <button ng-click="deleteCurrentTrip()" type="button" name="button" class="btn btn-danger">Delete Trip</button>
       </div>
+      <div ng-hide="userData.onTrip" class="location-box">
+        <h5>Currently at home in:</h5>
+        <h4>{{userData.homeCity.geo.city}}, {{userData.homeCity.geo.country}}</h4>
+        <img src="{{getMapUrl(userData.homeCity.geo.lat, userData.homeCity.geo.lng)}}"></img>
+      </div>
+      <div ng-show="userData.onTrip" class="trip-info-box" class="trip-info-box">
+        <h4>Currently Visiting: {{currData.lastStopData.geo.city}}, {{currData.lastStopData.geo.city}}</h4>
+        <img src="{{getMapUrl(currData.lastStopData.geo.city, currData.lastStopData.geo.city)}}"></img>
+      </div>
     </div>
 
     <!-- ng-hide this button if the trip on the page is not the current trip-->
@@ -32,18 +41,24 @@
           <city-search city-data="newStopObj.stopData"></city-search>
         </div>
         <div class="form-group">
-          <div class="form-group">
+          <label for="past-stop">Past stop? </label>
+          <input id="past-stop" ng-model="pastStop" type="checkbox" name="name" value="">
+        </div>
+
+
+        <div class="form-group">
+          <div ng-show="pastStop" class="form-group">
             <div class="form-group">
               <label for="start-date-input">Arrive Date: </label>
               <input type="date" ng-model="newStopObj.arriveTimestamp" id="start-date-input">
             </div>
-            <div class="form-group">
+            <div ng-show="pastStop" class="form-group">
               <label for="end-date-input">Depart Date: </label>
               <input type="date" ng-model="newStopObj.departTimestamp" id="end-date-input">
             </div>
           </div>
           <div class="button-group form-group">
-            <button ng-click="addStopToTrip(currTripId, newStopObj)" class="btn btn-primary">Add Trip</button>
+            <button ng-click="addStopToTrip(currTripId, newStopObj)" class="btn btn-primary">Add Stop</button>
           </div>
         </div>
       </form>
@@ -52,7 +67,7 @@
 
 
     <div class="stop-box-container col-md-9 row">
-      <div ng-repeat="stop in allStops | orderBy: '-departTimestamp'" class="stop-box col-md-6">
+      <div ng-repeat="stop in allStops | orderBy: '-arriveTimestamp'" class="stop-box col-md-6">
         <div class="stop-wrapper">
           <div class="stop-map-wrapper">
             <img src="{{getMapUrl(stop.stopData.geo.lat, stop.stopData.geo.lng)}}"></img>

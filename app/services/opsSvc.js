@@ -194,5 +194,9 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
     return stopSvc.addStop(tripId, stopObj); // return promise to ctrl
   };
 
+  this.addEndDateToStop = function(tripId, stopId, endDate) {
+    return stopSvc.setStopDepartDate(tripId, stopId, endDate); // return promise to CTRL
+  };
+
 
 });

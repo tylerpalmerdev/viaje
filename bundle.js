@@ -315,6 +315,10 @@ trvlApp.service('opsSvc', ["constants", "$q", "userSvc", "tripSvc", "stopSvc", f
     return stopSvc.addStop(tripId, stopObj); // return promise to ctrl
   };
 
+  this.addEndDateToStop = function(tripId, stopId, endDate) {
+    return stopSvc.setStopDepartDate(tripId, stopId, endDate); // return promise to CTRL
+  };
+
 
 }]);
 
@@ -352,12 +356,14 @@ trvlApp.service('stopSvc', ["constants", "$firebaseArray", "$firebaseObject", fu
   };
 
   this.setStopDepartDate = function(tripId, stopId, date) { // date in ms
-    getStop(tripId, stopId)
+    var stopObj = $firebaseObject(rootRef.child(tripId + "/" + stopId));
+    // this.getStop(tripId, stopId)
+    stopObj.$loaded() // stopObj is promise that object will load
     .then(
       function(response) {
-        var stopObj = response;
+        // var stopObj = response;
         stopObj.departTimestamp = date;
-        return stopObj.$save(); // return promise of saving object with new depart date
+        return stopObj.$save(); // PROMISE
       }
     );
   };
@@ -549,27 +555,6 @@ trvlApp.directive('citySearch', function() {
   };
 });
 
-trvlApp.controller('menuBarCtrl', ["$scope", "authSvc", function($scope, authSvc) {
-
-  $scope.logout = function() {
-    authSvc.signOut();
-  };
-
-
-}]);
-
-trvlApp.directive('menuBar', function() {
-  return {
-    templateUrl: 'app/directives/menuBar/menuBarTmpl.html',
-    restrict: 'E',
-    scope: {
-      userData: '=',
-      currData: '='
-    },
-    controller: 'menuBarCtrl'
-  };
-});
-
 trvlApp.controller('loginCtrl', ["$scope", "$state", "authSvc", "constants", function($scope, $state, authSvc, constants) {
 
   $scope.newuser = false; // default view: login, not new user reg
@@ -686,18 +671,42 @@ trvlApp.controller('tripCtrl', ["$scope", "$stateParams", "currAuth", "opsSvc", 
   // FUNCTIONS
 
   $scope.addStopToTrip = function(tripId, stopObj) {
-    opsSvc.addStopToTrip(tripId, stopObj);
-    // clear dates after clicking due to angular ng-model/ date input error
-    $scope.newStopObj = {}; // clear for dates
+    // // add today's date as end date to current stop
+    if ($scope.pastStop) { // if stop is in past
+      // add new stop
+      opsSvc.addStopToTrip(tripId, stopObj);
+      // getCurrData req'd?
+    } else { // if new stop & moving:
+      var lastStopId = $scope.currData.lastStopId;
+      var now = Date.parse(new Date().toString());
+      opsSvc.addStopToTrip(tripId, stopObj);
+
+      // opsSvc.addEndDateToStop(tripId, lastStopId, now)
+      // .then(
+      //   function(response) {
+      //     console.log('End date added to last stop. Now adding new stop.');
+      //     return opsSvc.addStopToTrip(tripId, stopObj);
+      //   }
+      // )
+      // .then(
+      //   function(response) {
+      //     console.log('New stop added w/ start date of today. Response: ', response, 'Now updating currData.');
+      //     opsSvc.getCurrData(currAuth.uid, $scope); // update currData on page
+      //   }
+      // );
+    }
+    opsSvc.getCurrData(currAuth.uid, $scope); // update data
+    // clear obj (ang date input err)
+
+    $scope.newStopObj = {};
   };
 
   // will only be used if current trip is active
-  $scope.endTrip = function(tripId) {
-    opsSvc.endTripForUser(currAuth.uid) //, $scope.tripData.latestTrip.$id)
+  $scope.endCurrentTrip = function(tripId) {
+    opsSvc.endTripForUser(currAuth.uid, $scope.currTripId)
     .then(
       function(response) {
         console.log('trip id: ', tripId, 'ended.');
-        opsSvc.getUserData(currAuth.uid, $scope);  // update $scope.userData
       }
     );
   };
@@ -705,3 +714,24 @@ trvlApp.controller('tripCtrl', ["$scope", "$stateParams", "currAuth", "opsSvc", 
   console.log($scope);
 
 }]);
+
+trvlApp.controller('menuBarCtrl', ["$scope", "authSvc", function($scope, authSvc) {
+
+  $scope.logout = function() {
+    authSvc.signOut();
+  };
+
+
+}]);
+
+trvlApp.directive('menuBar', function() {
+  return {
+    templateUrl: 'app/directives/menuBar/menuBarTmpl.html',
+    restrict: 'E',
+    scope: {
+      userData: '=',
+      currData: '='
+    },
+    controller: 'menuBarCtrl'
+  };
+});
