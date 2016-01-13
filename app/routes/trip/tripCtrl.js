@@ -1,4 +1,4 @@
-trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, opsSvc) {
+trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, opsSvc, uibDateParser) {
   // -- GET DATA FOR TRIP DETAIL $SCOPE -- //
   // $scope.userData
   opsSvc.getUserData(currAuth.uid, $scope);
@@ -41,8 +41,7 @@ trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, opsSvc) 
   $scope.addStopToTrip = function(tripId, stopObj) {
     opsSvc.addStopToTrip(tripId, stopObj);
     // clear dates after clicking due to angular ng-model/ date input error
-    stopObj.departTimestamp = undefined;
-    stopObj.arriveTimestamp = undefined;
+    $scope.newStopObj = {}; // clear for dates
   };
 
   // will only be used if current trip is active

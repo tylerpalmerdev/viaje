@@ -154,6 +154,7 @@ trvlApp.service('opsSvc', ["constants", "$q", "userSvc", "tripSvc", "stopSvc", f
           if (trip.isActive === true) { // if active trip is found, set data and return:
             currData.tripIsActive = true;
             currData.lastTripId = trip.$id;
+            currData.lastTripName = trip.name;
             break; // break out of for loop if active trip found
           }
           else { // if active trip not found:
@@ -220,6 +221,7 @@ trvlApp.service('opsSvc', ["constants", "$q", "userSvc", "tripSvc", "stopSvc", f
 
     var def = $q.defer(); // create deferrer
     tripObj.isActive = true; // set trip as active
+    firstStopObj.arriveTimestamp = Date.parse(new Date().toString());
     tripSvc.addNewTrip(uid, tripObj) // add trip, returns promise
     .then(
       function(response) {
@@ -231,8 +233,8 @@ trvlApp.service('opsSvc', ["constants", "$q", "userSvc", "tripSvc", "stopSvc", f
     )
     .then(
       function(response) { // when resolved
-        var stopId = response.key();
-        console.log("Stop obj added to /stops/ with id of ", stopId);
+        // var stopId = response.key();
+        console.log("First stop added with response: ", response);
         return userSvc.changeUserOnTrip(uid, true); // set userObj.onTrip = true;
       },
       constants.rejectLog
@@ -310,8 +312,7 @@ trvlApp.service('opsSvc', ["constants", "$q", "userSvc", "tripSvc", "stopSvc", f
       stopObj.departTimestamp = Date.parse(stopObj.departTimestamp);
     }
 
-    console.log(tripId, stopObj);
-    // return stopSvc.addStop(stopObj); // return promise to ctrl
+    return stopSvc.addStop(tripId, stopObj); // return promise to ctrl
   };
 
 
@@ -563,7 +564,7 @@ trvlApp.directive('menuBar', function() {
     restrict: 'E',
     scope: {
       userData: '=',
-      tripData: '='
+      currData: '='
     },
     controller: 'menuBarCtrl'
   };
@@ -644,7 +645,7 @@ trvlApp.controller('mytripsCtrl', ["$scope", "currAuth", "opsSvc", "constants", 
 
 }]);
 
-trvlApp.controller('tripCtrl', ["$scope", "$stateParams", "currAuth", "opsSvc", function($scope, $stateParams, currAuth, opsSvc) {
+trvlApp.controller('tripCtrl', ["$scope", "$stateParams", "currAuth", "opsSvc", "uibDateParser", function($scope, $stateParams, currAuth, opsSvc, uibDateParser) {
   // -- GET DATA FOR TRIP DETAIL $SCOPE -- //
   // $scope.userData
   opsSvc.getUserData(currAuth.uid, $scope);
@@ -687,8 +688,7 @@ trvlApp.controller('tripCtrl', ["$scope", "$stateParams", "currAuth", "opsSvc", 
   $scope.addStopToTrip = function(tripId, stopObj) {
     opsSvc.addStopToTrip(tripId, stopObj);
     // clear dates after clicking due to angular ng-model/ date input error
-    stopObj.departTimestamp = undefined;
-    stopObj.arriveTimestamp = undefined;
+    $scope.newStopObj = {}; // clear for dates
   };
 
   // will only be used if current trip is active

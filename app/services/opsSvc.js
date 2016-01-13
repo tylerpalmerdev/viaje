@@ -33,6 +33,7 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
           if (trip.isActive === true) { // if active trip is found, set data and return:
             currData.tripIsActive = true;
             currData.lastTripId = trip.$id;
+            currData.lastTripName = trip.name;
             break; // break out of for loop if active trip found
           }
           else { // if active trip not found:
@@ -99,6 +100,7 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
 
     var def = $q.defer(); // create deferrer
     tripObj.isActive = true; // set trip as active
+    firstStopObj.arriveTimestamp = Date.parse(new Date().toString());
     tripSvc.addNewTrip(uid, tripObj) // add trip, returns promise
     .then(
       function(response) {
@@ -110,8 +112,8 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
     )
     .then(
       function(response) { // when resolved
-        var stopId = response.key();
-        console.log("Stop obj added to /stops/ with id of ", stopId);
+        // var stopId = response.key();
+        console.log("First stop added with response: ", response);
         return userSvc.changeUserOnTrip(uid, true); // set userObj.onTrip = true;
       },
       constants.rejectLog
@@ -189,8 +191,7 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
       stopObj.departTimestamp = Date.parse(stopObj.departTimestamp);
     }
 
-    console.log(tripId, stopObj);
-    // return stopSvc.addStop(stopObj); // return promise to ctrl
+    return stopSvc.addStop(tripId, stopObj); // return promise to ctrl
   };
 
 

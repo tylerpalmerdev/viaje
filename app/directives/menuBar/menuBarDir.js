@@ -4,7 +4,7 @@ trvlApp.directive('menuBar', function() {
     restrict: 'E',
     scope: {
       userData: '=',
-      tripData: '='
+      currData: '='
     },
     controller: 'menuBarCtrl'
   };
