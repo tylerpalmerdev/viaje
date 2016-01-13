@@ -2,7 +2,6 @@
 /* ensure view-body takes up whole height of screen */
 .view-body {
   height: 100%;
-  position: relative;
 }
 
 /* custom class to vertically align block elem in parent*/
@@ -108,6 +107,10 @@
 .trip-box {
   border: 2px solid black;
   margin: 10px;
+}
+
+.accordion-toggle {
+  cursor: pointer;
 }
 
 /*VARIABLES*/

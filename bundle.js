@@ -1,22 +1,11 @@
 // create angular app
-var trvlApp = angular.module('trvlApp', ['ui.router', 'firebase']);
+var trvlApp = angular.module('trvlApp', ['ui.router', 'firebase', 'ui.bootstrap']);
 
 // auth check function to use with restricted views
 var authCheck = function(authSvc, $firebaseAuth) {
   return authSvc.getCurrentAuth().$requireAuth();
 };
 authCheck.$inject = ["authSvc", "$firebaseAuth"];
-
-/*
-// event listener to console.log route changes
-trvlApp.run(function($rootScope) {
-  $rootScope.$on('$stateChangeStart',
-    function(e, toState, toParams, fromState, fromParams) {
-      console.log('State Changed from ', fromState.name, ' to ', toState.name);
-    }
-  );
-});
-*/
 
 // config angular app with routes, using $stateProvider
 trvlApp.config(["$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
@@ -138,23 +127,90 @@ trvlApp.service('opsSvc', ["constants", "$q", "userSvc", "tripSvc", "stopSvc", f
   doesn't pull any data from firebase directly, uses other services
   */
 
-  /* SECTION 1 - GET ALL USER DATA FOR CTRL */
-  // pull current user data from userSvc, as it is in DB
-  this.getUserData = function(uid) {
-    return userSvc.getUserRefObj(uid);
-  };
+  /* SECTION 1 - $SCOPE DATA OPS */
 
-  // to be used by ctrl to update $scope data
-  this.updateUserData = function(authObj, scope) {
-    this.getCurrUserData(authObj.uid)
+  // userData: pull current user data from userSvc, as it is in DB (mytrips & trip)
+  this.getUserData = function(uid, scopeObj) {
+    userSvc.getUserRefObj(uid)
     .then(
       function(response) {
-        scope.userData = response;
+        scopeObj.userData = response;
       }
     );
   };
+  // currData: get active (trip.isActive = true) OR last trip ID for user and last stop Id for trip. Last based on end date.
 
-  /* SECTION 2 - GET ALL TRIP DATA FOR CTRL*/
+  this.getCurrData = function(uid, scopeObj) {
+
+    var currData = {}; // last tripId, last stopId, tripIsActive =  t/f
+    tripSvc.getTripsForUser(uid) //"-K7qmc3o65fsEgmAkzHw"
+    .then(
+      function(response) {
+        var userTrips = response; // fb array
+        var latestEnd = 0; // set as 0 to compare
+        for (var i = 0; i < userTrips.length; i++) {
+          var trip = userTrips[i];
+          var endTimestamp = trip.endTimestamp; // convert to number to compare
+          if (trip.isActive === true) { // if active trip is found, set data and return:
+            currData.tripIsActive = true;
+            currData.lastTripId = trip.$id;
+            break; // break out of for loop if active trip found
+          }
+          else { // if active trip not found:
+            currData.tripIsActive = false;
+            // console.log(endTimestamp);
+            if (!endTimestamp) {
+              // console.log("trip has undefined end date and is not set to 'isActive'");
+            } else if (endTimestamp > latestEnd) {
+              latestEnd = endTimestamp;
+              currData.lastTripName = trip.name;
+              currData.lastTripId = trip.$id; // set latest trip equal to trip id
+            }
+          }
+        }
+        return stopSvc.getStopsForTrip(currData.lastTripId);
+      },
+      constants.rejectLog // log for promise reject
+    )
+    .then(
+      function(response) {
+        var tripStops = response; // arr
+        var latest = 0; // for comparison
+        for (var k = 0; k < tripStops.length; k++) {
+          var stop = tripStops[k];
+          var departStamp = stop.departTimestamp;
+          var arriveStamp = stop.arriveTimestamp;
+          if (!departStamp && !arriveStamp) {
+            console.log("a stop on the user's latest trip has no start or end date.");
+          } else if (!departStamp && arriveStamp > latest) { // if no depart but arrived later
+            // console.log(arriveStamp);
+            latest = arriveStamp;
+            currData.lastStop = stop.stopData.placeString;
+            currData.lastStopId = stop.$id;
+          } else if (departStamp && departStamp > latest) { // if depart stamp is present && later
+            // console.log(departStamp);
+            latest = departStamp;
+            currData.lastStop = stop.stopData.placeString;
+            currData.lastStopId = stop.$id;
+          }
+        }
+        scopeObj.currData = currData; // once all done, final step, set scopeObj.currData to result
+      },
+      constants.rejectLog // log for promise reject
+    );
+  }; // END
+
+  // userTrips: pull all trips for a user (mytrips)
+  this.getAllTripsForUser = function(uid) {
+    return tripSvc.getTripsForUser(uid);
+  };
+
+  // allStops: pull all stops for a trip (trip)
+  this.getTripStopsData = function(tripId) {
+    return stopSvc.getStopsForTrip(tripId);
+  };
+
+  /* SECTION 2 - MYTRIPS VIEW OPS */
 
   // add trip for user, based on new start trip.
   // long promise chain, with each step dependent on something that the previous generates, mainly IDs from new records
@@ -190,33 +246,17 @@ trvlApp.service('opsSvc', ["constants", "$q", "userSvc", "tripSvc", "stopSvc", f
     return def.promise; // return deferrer promise
   };
 
-  // gets all data about trips for user, including which (if any) is current, which stop is current (if not, currLoc = home)
-  this.getTripDataForUser = function(uid) {
-    var def = $q.defer();
-    var tripData = {};
-    tripSvc.getTripsForUser(uid)
+  this.addCompletedTripForUser = function(uid, tripObj) {
+    tripObj.isActive = false;
+    tripSvc.addNewTrip(uid, tripObj)
     .then(
       function(response) {
-        tripData.allTrips = response;
-        tripData.latestTrip = response[response.length - 1];
-        var latestTripId = tripData.latestTrip.$id;
-        return stopSvc.getStopsForTrip(latestTripId);
-      }
-    )
-    .then(
-      function(response) {
-        tripData.latestTripStops = response;
-        tripData.latestStop = tripData.latestTripStops[0];
-        // tripData.latestTripStops[tripData.latestTripStops.length - 1];
-        def.resolve(tripData);
+        console.log(response);
       }
     );
-    return def.promise;
   };
 
-  this.getAllTripsForUser = function(uid) {
-    return tripSvc.getTripsForUser(uid);
-  };
+  /* SECTION 3 - TRIP DETAIL VIEW OPS */
 
   // will do everything to end a trip, should only be used if trip.isActive = true
   this.endTripForUser = function(uid, tripId) {
@@ -241,46 +281,7 @@ trvlApp.service('opsSvc', ["constants", "$q", "userSvc", "tripSvc", "stopSvc", f
         def.resolve(response); // resolve promise with response from setting trip end date
       }
     );
-
     return def.promise;
-  };
-
-  // function used by ctrl to update $scope data once change made in view.
-  this.updateTripData = function(authObj, scope) {
-    this.getTripDataForUser(authObj.uid)
-    .then(
-      function(response) {
-        scope.tripData = response;
-      }
-    );
-  };
-
-  this.addCompletedTripForUser = function(uid, tripObj) {
-    tripObj.isActive = false;
-    tripSvc.addNewTrip(uid, tripObj)
-    .then(
-      function(response) {
-        console.log(response);
-      }
-    );
-  };
-
-
-  /* SECTION 3 - OPS FOR TRIP DETAIL PAGE CTRL */
-  this.getTripStopsData = function(tripId) {
-    return stopSvc.getStopsForTrip(tripId);
-  };
-
-  this.getFullTripData = function(tripId) {
-    /*
-    FOR EACH TRIP DETAIL PAGE:
-    var tripData = {
-      allStops: {} w/ details + ids, if stop.id = lastStop & currTrip = T, currLoc = stop
-      lastStop: stopId <-- stopSvc get last stop for
-      tripActive: T/F <-- if true, change view
-      tripName: tripSvc.getNameOfTrip(currAuth.uid, tripId);
-    }
-    */
   };
 
   this.addStopToTrip = function(tripId, stopObj) {
@@ -294,13 +295,9 @@ trvlApp.service('opsSvc', ["constants", "$q", "userSvc", "tripSvc", "stopSvc", f
     if (stopObj.departTimestamp) { // add depart date to object if it exists
       stopObj.departTimestamp = Date.parse(stopObj.departTimestamp);
     }
-    stopSvc.addStop(tripId, stopObj)
-    .then(
-      function(response) {
-        console.log(response);
-      }
-    );
+    return stopSvc.addStop(stopObj); // return promise to ctrl
   };
+
 
 }]);
 
@@ -313,13 +310,18 @@ trvlApp.service('stopSvc', ["constants", "$firebaseArray", "$firebaseObject", fu
 
   this.getStopsForTrip = function(tripId) {
     var tripStopsRef = rootRef.child(tripId); // get fb ref
-    return $firebaseArray(tripStopsRef); // get all stops for trip
+    return $firebaseArray(tripStopsRef).$loaded(); // return promise of gettting all trips
   };
 
   this.addStop = function(tripId, stopObj) {
     // later, in trip svc, add stopId to trip.stops array
-    var stopsForTrip = this.getStopsForTrip(tripId);
-    return stopsForTrip.$add(stopObj); // stop to trip and return promise
+    this.getStopsForTrip(tripId) // load stops for trip
+    .then(
+      function(response) { // if successful, response is stops arr
+        return response.$add(stopObj); // add stop to trip and return promise
+      },
+      constants.rejectLog
+    );
   };
 
   this.getLatestStopOfTrip = function(tripId) {
@@ -584,16 +586,14 @@ trvlApp.controller('loginCtrl', ["$scope", "$state", "authSvc", "constants", fun
 }]);
 
 trvlApp.controller('mytripsCtrl', ["$scope", "currAuth", "opsSvc", "constants", function($scope, currAuth, opsSvc, constants) {
-  $scope.test = 'Mytrips ctrl connected!';
+  // -- GET DATA FOR MY TRIPS $SCOPE -- //
+  // $scope.userData
+  opsSvc.getUserData(currAuth.uid, $scope);
 
-  // update user data whenever view reloads. Alternative: 3-way data bind?
-  opsSvc.getUserData(currAuth.uid)
-  .then(
-    function(response) {
-      $scope.userData = response;
-    }
-  );
+  // $scope.currData (last stop, last trip)
+  opsSvc.getCurrData(currAuth.uid, $scope);
 
+  // $scope.userTrips
   opsSvc.getAllTripsForUser(currAuth.uid)
   .then(
     function(response) {
@@ -601,25 +601,17 @@ trvlApp.controller('mytripsCtrl', ["$scope", "currAuth", "opsSvc", "constants", 
     }
   );
 
-  opsSvc.updateTripData(currAuth, $scope);
+  // -- UI VARIABLES & FUNCTIONS -- //
 
+
+  // -- MY TRIPS $SCOPE FUNCTIONS -- //
+
+  // start a new trip (start date of today, first stop chosen in view)
   $scope.startTrip = function(newTripObj, firstStopObj) {
     opsSvc.startTripForUser(currAuth.uid, newTripObj, firstStopObj)
     .then( // after trip is started:
       function(response) {
-        opsSvc.updateUserData(currAuth, $scope);  // update $scope.userData
-        opsSvc.updateTripData(currAuth, $scope); // update $scope.tripData
-      }
-    );
-  };
-
-  $scope.endCurrentTrip = function() {
-    opsSvc.endTripForUser(currAuth.uid) //, $scope.tripData.latestTrip.$id)
-    .then(
-      function(response) {
-        console.log('trip ended ', response);
-        opsSvc.updateUserData(currAuth, $scope);  // update $scope.userData
-        opsSvc.updateTripData(currAuth, $scope); // update $scope.tripData
+        opsSvc.getUserData(currAuth.uid, $scope);  // update $scope.userData
       }
     );
   };
@@ -629,24 +621,27 @@ trvlApp.controller('mytripsCtrl', ["$scope", "currAuth", "opsSvc", "constants", 
     $scope.oldTripObj = {}; // reset for ang date input error
   };
 
+  // log to check $scope //
+  console.log($scope);
+
 }]);
 
 trvlApp.controller('tripCtrl', ["$scope", "$stateParams", "currAuth", "opsSvc", function($scope, $stateParams, currAuth, opsSvc) {
   // -- GET DATA FOR TRIP DETAIL $SCOPE -- //
   // $scope.userData
-  opsSvc.getUserData(currAuth.uid)
+  opsSvc.getUserData(currAuth.uid, $scope);
+
+  // $scope.currData (last stop, last trip)
+  opsSvc.getCurrData(currAuth.uid, $scope);
+
+  // $scope.allStops (from curr url tripId)
+  $scope.currTripId = $stateParams.tripId;
+  opsSvc.getTripStopsData($stateParams.tripId)
   .then(
     function(response) {
-      $scope.userData = response;
+      $scope.allStops = response;
     }
   );
-
-  // $scope.tripData
-  opsSvc.updateTripData(currAuth, $scope);
-
-  // since you are on a trip detail page, url has tripId param
-  $scope.currTripId = $stateParams.tripId;
-  $scope.allStops = opsSvc.getTripStopsData($stateParams.tripId);
 
   // UI functions
   $scope.showForm = false; // hide new stop form by default
@@ -678,11 +673,12 @@ trvlApp.controller('tripCtrl', ["$scope", "$stateParams", "currAuth", "opsSvc", 
     opsSvc.endTripForUser(currAuth.uid) //, $scope.tripData.latestTrip.$id)
     .then(
       function(response) {
-        console.log('trip ended ', response);
-        opsSvc.updateUserData(currAuth, $scope);  // update $scope.userData
-        opsSvc.updateTripData(currAuth, $scope); // update $scope.tripData
+        console.log('trip id: ', tripId, 'ended.');
+        opsSvc.getUserData(currAuth.uid, $scope);  // update $scope.userData
       }
     );
   };
+
+  console.log($scope);
 
 }]);

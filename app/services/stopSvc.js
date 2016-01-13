@@ -7,13 +7,18 @@ trvlApp.service('stopSvc', function(constants, $firebaseArray, $firebaseObject) 
 
   this.getStopsForTrip = function(tripId) {
     var tripStopsRef = rootRef.child(tripId); // get fb ref
-    return $firebaseArray(tripStopsRef); // get all stops for trip
+    return $firebaseArray(tripStopsRef).$loaded(); // return promise of gettting all trips
   };
 
   this.addStop = function(tripId, stopObj) {
     // later, in trip svc, add stopId to trip.stops array
-    var stopsForTrip = this.getStopsForTrip(tripId);
-    return stopsForTrip.$add(stopObj); // stop to trip and return promise
+    this.getStopsForTrip(tripId) // load stops for trip
+    .then(
+      function(response) { // if successful, response is stops arr
+        return response.$add(stopObj); // add stop to trip and return promise
+      },
+      constants.rejectLog
+    );
   };
 
   this.getLatestStopOfTrip = function(tripId) {

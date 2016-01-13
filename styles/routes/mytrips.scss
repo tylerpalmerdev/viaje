@@ -5,3 +5,7 @@ $trip-box-margin: 10px;
   border: $trip-box-border;
   margin: $trip-box-margin;
 }
+
+.accordion-toggle {
+  cursor: pointer;
+}

@@ -1,21 +1,10 @@
 // create angular app
-var trvlApp = angular.module('trvlApp', ['ui.router', 'firebase']);
+var trvlApp = angular.module('trvlApp', ['ui.router', 'firebase', 'ui.bootstrap']);
 
 // auth check function to use with restricted views
 var authCheck = function(authSvc, $firebaseAuth) {
   return authSvc.getCurrentAuth().$requireAuth();
 };
-
-/*
-// event listener to console.log route changes
-trvlApp.run(function($rootScope) {
-  $rootScope.$on('$stateChangeStart',
-    function(e, toState, toParams, fromState, fromParams) {
-      console.log('State Changed from ', fromState.name, ' to ', toState.name);
-    }
-  );
-});
-*/
 
 // config angular app with routes, using $stateProvider
 trvlApp.config(function($stateProvider, $urlRouterProvider) {

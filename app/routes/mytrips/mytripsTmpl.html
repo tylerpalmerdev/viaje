@@ -1,31 +1,36 @@
-<div class="view-body">
-  <menu-bar user-data="userData" trip-data="tripData"></menu-bar>
-  <div class="page-heading col-sm-3">
-    <h1>MY TRIPS</h1>
-  </div>
-  <div ng-hide="userData.onTrip" class="latest-trip-info col-sm-3">
-    <h5>Not currently on a trip.</h5>
-    <span>Latest trip: {{tripData.latestTrip.name}}</span>
-  </div>
-  <div ng-show="userData.onTrip" class="current-trip-info ">
-    <span>Current Trip:  {{tripData.latestTrip.name}}</span>
+<menu-bar user-data="userData" trip-data="tripData"></menu-bar>
+<div class="view-body container">
+
+  <div class="page-heading row">
+    <div class="col-sm-3">
+      <h1>MY TRIPS</h1>
+    </div>
+    <div ng-hide="userData.onTrip" class="latest-trip-info col-sm-3">
+      <h5>Not currently on a trip.</h5>
+      <span>Latest trip: {{tripData.latestTrip.name}}</span>
+    </div>
   </div>
 
-  <form ng-hide="userData.onTrip" class="new-trip-form col-sm-12 form-inline">
-    <h3>Start a new trip, when you've arrived to first stop: </h3>
-    <div class="form-group">
-      <label for="new-trip-name">New Trip Name</label>
-      <input ng-model="newTrip.name" id="new-trip-name" class="form-control" type="text" placeholder="Enter new trip name">
-    </div>
-    <div class="form-group">
-      <label for="place-search-input">First stop: </label>
-        <city-search city-data="firstStopObj.stopData"></city-search>
-    </div>
-    <button ng-click="startTrip(newTrip, firstStopObj)" class="btn">Start Trip</button>
-  </form>
+  <div class="form-container row">
+    <form class="new-trip-form form-inline col-xs-12">
+      <div class="form-heading-container">
+        <h5>Start a new trip, when you've arrived to first stop:</h5>
+      </div>
+      <div class="form-group">
+        <label for="new-trip-name">New Trip Name</label>
+        <input ng-model="newTrip.name" id="new-trip-name" class="form-control" type="text" placeholder="Enter new trip name">
+      </div>
+      <div class="form-group">
+        <label for="place-search-input">First stop: </label>
+          <city-search city-data="firstStopObj.stopData"></city-search>
+      </div>
+      <button ng-click="startTrip(newTrip, firstStopObj)" class="btn">Start Trip</button>
+    </form>
+  </div>
 
-  <div class="form-container col-xs-12 col-sm-9 col-sm-offset-1">
-    <form class="new-trip-form form-inline">
+
+  <div class="form-container row">
+    <form class="new-trip-form form-inline col-xs-12">
       <div class="form-heading-container">
         <h5>Add a completed trip:</h5>
       </div>
@@ -47,27 +52,30 @@
     </form>
   </div>
 
-  <div class="panel-group col-xs-12 col-sm-8 col-sm-offset-2" id="accordion" role="tablist">
-    <div ng-repeat="trip in userTrips | orderBy: '+endTimestamp'" class="panel trip-panel panel-default">
-      <div class="panel-heading" role="tab" id="{{trip.name + '-panel-heading'">
-        <h4 class="panel-title">
-          <a href="{{'#' + trip.name + '-panel'}}" data-toggle="collapse" data-parent="#accordion">
-            {{trip.name}}
-          </a>
-        </h4>
-        <span>{{trip.startTimestamp | date: 'MM/dd/yyyy'}} - </span>
-        <span>{{trip.endTimestamp | date: 'MM/dd/yyyy'}}</span>
-      </div>
-      <div id="{{trip.name + '-panel'}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{trip.name + '-panel'}}">
-        <div class="panel-body">
-            <p>
-              Trip Stats
-            </p>
-            <a href="" ui-sref="trip({tripId: trip.$id})">Go To {{trip.name}} Trip Page</a>
-          </p>
+  <div class="row">
+    <!-- <script type="text/ng-template" id="group-template.html">
+      <div class="panel {{panelClass || 'panel-default'}}">
+        <div class="panel-heading">
+          <h4 class="panel-title" style="color:#fa39c3">
+            <a href tabindex="0" class="accordion-toggle" ng-click="toggleOpen()" uib-accordion-transclude="heading"><span
+              ng-class="{'text-muted': isDisabled}">{{heading}}</span></a>
+          </h4>
+        </div>
+        <div class="panel-collapse collapse" uib-collapse="!isOpen">
+          <div class="panel-body" style="text-align: right" ng-transclude></div>
         </div>
       </div>
-    </div>
+    </script> -->
+
+    <uib-accordion close-others="oneAtATime">
+      <uib-accordion-group heading="{{trip.name}}: {{trip.startTimestamp | date: 'MM/dd/yyyy'}} - {{trip.endTimestamp | date: 'MM/dd/yyyy'}}" ng-repeat="trip in userTrips">
+        <a ui-sref="trip({tripId: trip.$id})">Go To {{trip.name}} Trip Page</a>
+      </uib-accordion-group>
+      <!-- <uib-accordion-group heading="Static Header, initially expanded" is-open="status.isFirstOpen" is-disabled="status.isFirstDisabled">
+        This content is straight in the template.
+      </uib-accordion-group> -->
+    </uib-accordion>
+
   </div>
 
-</div>
+</div> <!--END -->

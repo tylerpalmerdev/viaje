@@ -1,19 +1,19 @@
 trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, opsSvc) {
   // -- GET DATA FOR TRIP DETAIL $SCOPE -- //
   // $scope.userData
-  opsSvc.getUserData(currAuth.uid)
+  opsSvc.getUserData(currAuth.uid, $scope);
+
+  // $scope.currData (last stop, last trip)
+  opsSvc.getCurrData(currAuth.uid, $scope);
+
+  // $scope.allStops (from curr url tripId)
+  $scope.currTripId = $stateParams.tripId;
+  opsSvc.getTripStopsData($stateParams.tripId)
   .then(
     function(response) {
-      $scope.userData = response;
+      $scope.allStops = response;
     }
   );
-
-  // $scope.tripData
-  opsSvc.updateTripData(currAuth, $scope);
-
-  // since you are on a trip detail page, url has tripId param
-  $scope.currTripId = $stateParams.tripId;
-  $scope.allStops = opsSvc.getTripStopsData($stateParams.tripId);
 
   // UI functions
   $scope.showForm = false; // hide new stop form by default
@@ -45,11 +45,12 @@ trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, opsSvc) 
     opsSvc.endTripForUser(currAuth.uid) //, $scope.tripData.latestTrip.$id)
     .then(
       function(response) {
-        console.log('trip ended ', response);
-        opsSvc.updateUserData(currAuth, $scope);  // update $scope.userData
-        opsSvc.updateTripData(currAuth, $scope); // update $scope.tripData
+        console.log('trip id: ', tripId, 'ended.');
+        opsSvc.getUserData(currAuth.uid, $scope);  // update $scope.userData
       }
     );
   };
+
+  console.log($scope);
 
 });
