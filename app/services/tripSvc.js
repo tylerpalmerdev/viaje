@@ -48,7 +48,7 @@ trvlApp.service('tripSvc', function($firebaseArray, $firebaseObject, constants) 
     tripObj.$loaded()
     .then(
       function(response) {
-        tripObj.endDate = endDate;
+        tripObj.endTimestamp = endDate;
         return tripObj.$save(); // return promise of setting tripObj.endDate to endDate provided
       }
     );

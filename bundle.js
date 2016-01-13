@@ -424,7 +424,7 @@ trvlApp.service('tripSvc', ["$firebaseArray", "$firebaseObject", "constants", fu
     tripObj.$loaded()
     .then(
       function(response) {
-        tripObj.endDate = endDate;
+        tripObj.endTimestamp = endDate;
         return tripObj.$save(); // return promise of setting tripObj.endDate to endDate provided
       }
     );
@@ -552,6 +552,27 @@ trvlApp.directive('citySearch', function() {
       cityData: '='
     },
     controller: 'citySearchCtrl'
+  };
+});
+
+trvlApp.controller('menuBarCtrl', ["$scope", "authSvc", function($scope, authSvc) {
+
+  $scope.logout = function() {
+    authSvc.signOut();
+  };
+
+
+}]);
+
+trvlApp.directive('menuBar', function() {
+  return {
+    templateUrl: 'app/directives/menuBar/menuBarTmpl.html',
+    restrict: 'E',
+    scope: {
+      userData: '=',
+      currData: '='
+    },
+    controller: 'menuBarCtrl'
   };
 });
 
@@ -714,24 +735,3 @@ trvlApp.controller('tripCtrl', ["$scope", "$stateParams", "currAuth", "opsSvc", 
   console.log($scope);
 
 }]);
-
-trvlApp.controller('menuBarCtrl', ["$scope", "authSvc", function($scope, authSvc) {
-
-  $scope.logout = function() {
-    authSvc.signOut();
-  };
-
-
-}]);
-
-trvlApp.directive('menuBar', function() {
-  return {
-    templateUrl: 'app/directives/menuBar/menuBarTmpl.html',
-    restrict: 'E',
-    scope: {
-      userData: '=',
-      currData: '='
-    },
-    controller: 'menuBarCtrl'
-  };
-});
