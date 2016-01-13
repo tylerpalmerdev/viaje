@@ -5,11 +5,11 @@
     </div>
     <div class="header-buttons">
       <!--only show when activeTrip = true-->
-      <button ng-show="userData.onTrip" ui-sref="trip({tripId: tripData.latestTrip.$id})" class="btn new-entry">
+      <button ng-show="userData.onTrip" ui-sref="trip({tripId: currData.lastTripId})" class="btn new-entry">
         New Stop
       </button>
       <!--only show when activeTrip = false-->
-      <button ng-hide="userData.onTrip" ui-sref="mytrips" class="btn new-trip">
+      <button ui-sref="mytrips" ng-hide="userData.onTrip" ui-sref="mytrips" class="btn new-trip">
         New Trip
       </button>
     </div>
@@ -19,7 +19,7 @@
     <div class="header-text">
       <span>Logged in as {{userData.name}}</span>
       <span ng-hide="userData.onTrip">Not currently on a trip.</span>
-      <span ng-show="userData.onTrip">Current Trip: {{tripData.latestTrip.name}}</span>
+      <span ng-show="userData.onTrip">Current Trip: {{trip.lastTrip.name}}</span>
     </div>
 
 

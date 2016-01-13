@@ -1,5 +1,5 @@
 // create angular app
-var trvlApp = angular.module('trvlApp', ['ui.router', 'firebase', 'ui.bootstrap']);
+var trvlApp = angular.module('trvlApp', ['ui.router', 'firebase', 'ui.bootstrap', 'ngAnimate']);
 
 // auth check function to use with restricted views
 var authCheck = function(authSvc, $firebaseAuth) {

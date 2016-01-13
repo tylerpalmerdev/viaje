@@ -65,6 +65,7 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
             // console.log(arriveStamp);
             latest = arriveStamp;
             currData.lastStop = stop.stopData.placeString;
+            currData.lastStopData = stop.stopData;
             currData.lastStopId = stop.$id;
           } else if (departStamp && departStamp > latest) { // if depart stamp is present && later
             // console.log(departStamp);
@@ -77,19 +78,20 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
       },
       constants.rejectLog // log for promise reject
     );
-  }; // END
+  };
+
+  // REFACTOR TO BE PART OF FUNCTION FACTORY W/ AUTH & PROMISE FUNCTIONS
+  this.getMapUrl = function(lat, lon) {
+    var mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + lat + "," + lon + "&zoom=11&size=145x145&maptype=roadmap&key=AIzaSyBGfrzCswijyHNboZzf6WIKYIrg33FFHiE";
+    return mapUrl;
+  };
+
+  /* SECTION 2 - MYTRIPS VIEW OPS */
 
   // userTrips: pull all trips for a user (mytrips)
   this.getAllTripsForUser = function(uid) {
     return tripSvc.getTripsForUser(uid);
   };
-
-  // allStops: pull all stops for a trip (trip)
-  this.getTripStopsData = function(tripId) {
-    return stopSvc.getStopsForTrip(tripId);
-  };
-
-  /* SECTION 2 - MYTRIPS VIEW OPS */
 
   // add trip for user, based on new start trip.
   // long promise chain, with each step dependent on something that the previous generates, mainly IDs from new records
@@ -135,7 +137,19 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
     );
   };
 
+
+
   /* SECTION 3 - TRIP DETAIL VIEW OPS */
+
+  // allStops: pull all stops for a trip (trip)
+  this.getTripStopsData = function(tripId) {
+    return stopSvc.getStopsForTrip(tripId);
+  };
+
+  //
+  this.getTripData = function(uid, tripId) {
+    return tripSvc.getTripObj(uid, tripId);
+  };
 
   // will do everything to end a trip, should only be used if trip.isActive = true
   this.endTripForUser = function(uid, tripId) {
@@ -171,10 +185,12 @@ trvlApp.service('opsSvc', function(constants, $q, userSvc, tripSvc, stopSvc) {
       stopObj.arriveTimestamp = Date.parse(new Date().toString());
     }
 
-    if (stopObj.departTimestamp) { // add depart date to object if it exists
+    if (stopObj.departTimestamp) { // parse depart date of object if it exists
       stopObj.departTimestamp = Date.parse(stopObj.departTimestamp);
     }
-    return stopSvc.addStop(stopObj); // return promise to ctrl
+
+    console.log(tripId, stopObj);
+    // return stopSvc.addStop(stopObj); // return promise to ctrl
   };
 
 

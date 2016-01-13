@@ -11,6 +11,8 @@ $menu-item-border: 2px solid white;
 .menu-bar {
   width: 100%;
   height: $menu-height;
+  position: fixed;
+  z-index: 1000;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;

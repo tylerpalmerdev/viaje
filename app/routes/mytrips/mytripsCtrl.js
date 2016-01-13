@@ -15,7 +15,9 @@ trvlApp.controller('mytripsCtrl', function($scope, currAuth, opsSvc, constants) 
   );
 
   // -- UI VARIABLES & FUNCTIONS -- //
-
+  $scope.getMapUrl = function(lat, lon) {
+    return opsSvc.getMapUrl(lat, lon);
+  };
 
   // -- MY TRIPS $SCOPE FUNCTIONS -- //
 

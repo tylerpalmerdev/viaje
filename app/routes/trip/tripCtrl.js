@@ -15,11 +15,15 @@ trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, opsSvc) 
     }
   );
 
+  // [REFACTOR TO ASYNC]
+  $scope.tripData = opsSvc.getTripData(currAuth.uid, $stateParams.tripId);
+
   // UI functions
   $scope.showForm = false; // hide new stop form by default
   $scope.toggleForm = function() {
     $scope.showForm = !$scope.showForm;
   };
+
   // placeholder, want to pull from ops svc
   $scope.currTripStats = {
     countries: 2,
@@ -29,9 +33,10 @@ trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, opsSvc) 
 
   // THE MAP IMG + THIS SHOULD BE A CUSTOM DIRECTIVE
   $scope.getMapUrl = function(lat, lon) {
-    var mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + lat + "," + lon + "&zoom=11&size=145x145&maptype=roadmap&key=AIzaSyBGfrzCswijyHNboZzf6WIKYIrg33FFHiE";
-    return mapUrl;
+    return opsSvc.getMapUrl(lat, lon);
   };
+
+  // FUNCTIONS
 
   $scope.addStopToTrip = function(tripId, stopObj) {
     opsSvc.addStopToTrip(tripId, stopObj);
