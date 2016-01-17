@@ -1,4 +1,4 @@
-trvlApp.service('authSvc', function($firebaseObject, $firebaseArray, $firebaseAuth, $state, $q, constants, userSvc) {
+trvlApp.service('authSvc', function($firebaseObject, $firebaseArray, $firebaseAuth, $state, $q, constants, util, userSvc) {
 
   var baseRef = new Firebase(constants.fbBaseUrl);
   var usersRef = new Firebase(constants.fbBaseUrl + '/users/');

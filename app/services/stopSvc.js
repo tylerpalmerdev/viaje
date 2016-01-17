@@ -1,4 +1,4 @@
-trvlApp.service('stopSvc', function(constants, $firebaseArray, $firebaseObject) {
+trvlApp.service('stopSvc', function(constants, utilSvc, $firebaseArray, $firebaseObject) {
   /*
   RESPONSIBILITIES: adding/updating/deleting stop data from /stops/ in firebase
   NO INTERNAL SERVICE DEPENDENCIES (except for constants)
@@ -17,7 +17,7 @@ trvlApp.service('stopSvc', function(constants, $firebaseArray, $firebaseObject) 
       function(response) { // if successful, response is stops arr
         return response.$add(stopObj); // add stop to trip and return promise
       },
-      constants.rejectLog
+      utilSvc.rejectLog
     );
   };
 

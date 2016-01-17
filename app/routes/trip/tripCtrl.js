@@ -1,14 +1,14 @@
-trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, opsSvc, uibDateParser) {
+trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, dataOps, tripOps, util) {
   // -- GET DATA FOR TRIP DETAIL $SCOPE -- //
   // $scope.userData
-  opsSvc.getUserData(currAuth.uid, $scope);
+  dataOps.getUserData(currAuth.uid, $scope);
 
   // $scope.currData (last stop, last trip)
-  opsSvc.getCurrData(currAuth.uid, $scope);
+  dataOps.getCurrData(currAuth.uid, $scope);
 
   // $scope.allStops (from curr url tripId)
   $scope.currTripId = $stateParams.tripId;
-  opsSvc.getTripStopsData($stateParams.tripId)
+  tripOps.getTripStopsData($stateParams.tripId)
   .then(
     function(response) {
       $scope.allStops = response;
@@ -16,7 +16,7 @@ trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, opsSvc, 
   );
 
   // [REFACTOR TO ASYNC]
-  $scope.tripData = opsSvc.getTripData(currAuth.uid, $stateParams.tripId);
+  $scope.tripData = tripOps.getTripData(currAuth.uid, $stateParams.tripId);
 
   // UI functions
   $scope.showForm = false; // hide new stop form by default
@@ -33,7 +33,7 @@ trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, opsSvc, 
 
   // THE MAP IMG + THIS SHOULD BE A CUSTOM DIRECTIVE
   $scope.getMapUrl = function(lat, lon) {
-    return opsSvc.getMapUrl(lat, lon);
+    return util.getMapUrl(lat, lon);
   };
 
   // FUNCTIONS
@@ -42,36 +42,34 @@ trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, opsSvc, 
     // // add today's date as end date to current stop
     if ($scope.pastStop) { // if stop is in past
       // add new stop
-      opsSvc.addStopToTrip(tripId, stopObj);
+      tripOps.addStopToTrip(tripId, stopObj);
       // getCurrData req'd?
     } else { // if new stop & moving:
       var lastStopId = $scope.currData.lastStopId;
       var now = Date.parse(new Date().toString());
-      opsSvc.addStopToTrip(tripId, stopObj);
+      tripOps.addStopToTrip(tripId, stopObj);
 
-      // opsSvc.addEndDateToStop(tripId, lastStopId, now)
+      // tripOps.addEndDateToStop(tripId, lastStopId, now)
       // .then(
       //   function(response) {
       //     console.log('End date added to last stop. Now adding new stop.');
-      //     return opsSvc.addStopToTrip(tripId, stopObj);
+      //     return tripOps.addStopToTrip(tripId, stopObj);
       //   }
       // )
       // .then(
       //   function(response) {
       //     console.log('New stop added w/ start date of today. Response: ', response, 'Now updating currData.');
-      //     opsSvc.getCurrData(currAuth.uid, $scope); // update currData on page
+      //     tripOps.getCurrData(currAuth.uid, $scope); // update currData on page
       //   }
       // );
     }
-    opsSvc.getCurrData(currAuth.uid, $scope); // update data
-    // clear obj (ang date input err)
-
-    $scope.newStopObj = {};
+    tripOps.getCurrData(currAuth.uid, $scope); // update data
+    $scope.newStopObj = {};     // clear obj (ang date input err)
   };
 
   // will only be used if current trip is active
   $scope.endCurrentTrip = function(tripId) {
-    opsSvc.endTripForUser(currAuth.uid, $scope.currTripId)
+    tripOps.endTripForUser(currAuth.uid, $scope.currTripId)
     .then(
       function(response) {
         console.log('trip id: ', tripId, 'ended.');
@@ -79,6 +77,6 @@ trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, opsSvc, 
     );
   };
 
-  console.log($scope);
+  console.log($scope); // for monitoring/ debugging
 
 });

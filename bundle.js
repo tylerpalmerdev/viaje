@@ -486,71 +486,6 @@ trvlApp.service('userSvc', ["$firebaseArray", "$firebaseObject", "$q", "constant
 //BOTTOM
 }]);
 
-trvlApp.controller('menuBarCtrl', ["$scope", "authSvc", function($scope, authSvc) {
-
-  $scope.logout = function() {
-    authSvc.signOut();
-  };
-
-
-}]);
-
-trvlApp.directive('menuBar', function() {
-  return {
-    templateUrl: 'app/directives/menuBar/menuBarTmpl.html',
-    restrict: 'E',
-    scope: {
-      userData: '=',
-      currData: '='
-    },
-    controller: 'menuBarCtrl'
-  };
-});
-
-trvlApp.controller('mytripsCtrl', ["$scope", "currAuth", "opsSvc", "constants", function($scope, currAuth, opsSvc, constants) {
-  // -- GET DATA FOR MY TRIPS $SCOPE -- //
-  // $scope.userData
-  opsSvc.getUserData(currAuth.uid, $scope);
-
-  // $scope.currData (last stop, last trip)
-  opsSvc.getCurrData(currAuth.uid, $scope);
-
-  // $scope.userTrips
-  opsSvc.getAllTripsForUser(currAuth.uid)
-  .then(
-    function(response) {
-      $scope.userTrips = response;
-    }
-  );
-
-  // -- UI VARIABLES & FUNCTIONS -- //
-  $scope.getMapUrl = function(lat, lon) {
-    return opsSvc.getMapUrl(lat, lon);
-  };
-
-  // -- MY TRIPS $SCOPE FUNCTIONS -- //
-
-  // start a new trip (start date of today, first stop chosen in view)
-  $scope.startTrip = function(newTripObj, firstStopObj) {
-    opsSvc.startTripForUser(currAuth.uid, newTripObj, firstStopObj)
-    .then( // after trip is started:
-      function(response) {
-        opsSvc.getUserData(currAuth.uid, $scope);
-        opsSvc.getCurrData(currAuth.uid, $scope);  // update $scope.userData
-      }
-    );
-  };
-
-  $scope.addPastTrip = function(oldTripObj) {
-    opsSvc.addCompletedTripForUser(currAuth.uid, oldTripObj);
-    $scope.oldTripObj = {}; // reset for ang date input error
-  };
-
-  // log to check $scope //
-  console.log($scope);
-
-}]);
-
 trvlApp.controller('citySearchCtrl', ["$scope", "constants", function($scope, constants) {
   $scope.test = 'Two way directive pass';
 
@@ -620,6 +555,27 @@ trvlApp.directive('citySearch', function() {
   };
 });
 
+trvlApp.controller('menuBarCtrl', ["$scope", "authSvc", function($scope, authSvc) {
+
+  $scope.logout = function() {
+    authSvc.signOut();
+  };
+
+
+}]);
+
+trvlApp.directive('menuBar', function() {
+  return {
+    templateUrl: 'app/directives/menuBar/menuBarTmpl.html',
+    restrict: 'E',
+    scope: {
+      userData: '=',
+      currData: '='
+    },
+    controller: 'menuBarCtrl'
+  };
+});
+
 trvlApp.controller('loginCtrl', ["$scope", "$state", "authSvc", "constants", function($scope, $state, authSvc, constants) {
 
   $scope.newuser = false; // default view: login, not new user reg
@@ -649,6 +605,50 @@ trvlApp.controller('loginCtrl', ["$scope", "$state", "authSvc", "constants", fun
       }
     );
   };
+
+}]);
+
+trvlApp.controller('mytripsCtrl', ["$scope", "currAuth", "opsSvc", "constants", function($scope, currAuth, opsSvc, constants) {
+  // -- GET DATA FOR MY TRIPS $SCOPE -- //
+  // $scope.userData
+  opsSvc.getUserData(currAuth.uid, $scope);
+
+  // $scope.currData (last stop, last trip)
+  opsSvc.getCurrData(currAuth.uid, $scope);
+
+  // $scope.userTrips
+  opsSvc.getAllTripsForUser(currAuth.uid)
+  .then(
+    function(response) {
+      $scope.userTrips = response;
+    }
+  );
+
+  // -- UI VARIABLES & FUNCTIONS -- //
+  $scope.getMapUrl = function(lat, lon) {
+    return opsSvc.getMapUrl(lat, lon);
+  };
+
+  // -- MY TRIPS $SCOPE FUNCTIONS -- //
+
+  // start a new trip (start date of today, first stop chosen in view)
+  $scope.startTrip = function(newTripObj, firstStopObj) {
+    opsSvc.startTripForUser(currAuth.uid, newTripObj, firstStopObj)
+    .then( // after trip is started:
+      function(response) {
+        opsSvc.getUserData(currAuth.uid, $scope);
+        opsSvc.getCurrData(currAuth.uid, $scope);  // update $scope.userData
+      }
+    );
+  };
+
+  $scope.addPastTrip = function(oldTripObj) {
+    opsSvc.addCompletedTripForUser(currAuth.uid, oldTripObj);
+    $scope.oldTripObj = {}; // reset for ang date input error
+  };
+
+  // log to check $scope //
+  console.log($scope);
 
 }]);
 

@@ -7,7 +7,7 @@ var authCheck = function(authSvc, $firebaseAuth) {
 };
 
 // config angular app with routes, using $stateProvider
-trvlApp.config(function($stateProvider, $urlRouterProvider) {
+trvlApp.config(function($stateProvider, $urlRouterProvider, authSvc) {
   $stateProvider
   .state('login', {
     url: '/login',

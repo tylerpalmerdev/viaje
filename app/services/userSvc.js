@@ -38,13 +38,11 @@ trvlApp.service('userSvc', function($firebaseArray, $firebaseObject, $q, constan
     userObj.$loaded() // wait until object has loaded
     .then(
       function(response) { // when loaded
-        // console.log(response);
-        // var loadedUserObj = response;
         userObj.onTrip = bool; //onTrip property to T/F XX
         userObj.$save();
         def.resolve('user obj.onTrip updated to ' + bool); // save obj, return promise
       },
-      constants.rejectLog
+      util.rejectLog
     );
     return def.promise;
   };

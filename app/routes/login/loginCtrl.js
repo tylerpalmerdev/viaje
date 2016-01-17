@@ -1,8 +1,8 @@
-trvlApp.controller('loginCtrl', function($scope, $state, authSvc, constants) {
+trvlApp.controller('loginCtrl', function(constants, $scope, $state, authSvc) {
 
   $scope.newuser = false; // default view: login, not new user reg
 
-  $scope.toggleForm = function() { 
+  $scope.toggleForm = function() {
     $scope.newuser = !$scope.newuser;
   };
 
