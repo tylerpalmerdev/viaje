@@ -1,4 +1,4 @@
-trvlApp.service('userSvc', function($firebaseArray, $firebaseObject, $q, constants) {
+trvlApp.service('userSvc', function($firebaseArray, $firebaseObject, $q, util, constants) {
   /*
   RESPONSIBILITY: adding, getting, and deleting data from /users/ in fb
   NO INTERNAL SERVICE DEPENDENCIES (except for constants)

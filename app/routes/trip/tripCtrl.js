@@ -8,15 +8,12 @@ trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, dataOps,
 
   // $scope.allStops (from curr url tripId)
   $scope.currTripId = $stateParams.tripId;
-  tripOps.getTripStopsData($stateParams.tripId)
-  .then(
-    function(response) {
-      $scope.allStops = response;
-    }
-  );
+  tripOps.getTripStopsData($stateParams.tripId, $scope);
 
   // [REFACTOR TO ASYNC]
-  $scope.tripData = tripOps.getTripData(currAuth.uid, $stateParams.tripId);
+  tripOps.getTripData(currAuth.uid, $stateParams.tripId, $scope);
+
+  // tripOps.getTripData(currAuth.uid, $stateParams.tripId, $scope);
 
   // UI functions
   $scope.showForm = false; // hide new stop form by default
@@ -24,7 +21,7 @@ trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, dataOps,
     $scope.showForm = !$scope.showForm;
   };
 
-  // placeholder, want to pull from ops svc
+  // placeholder. want to build stats svc later
   $scope.currTripStats = {
     countries: 2,
     stops: 5,
@@ -40,7 +37,7 @@ trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, dataOps,
 
   $scope.addStopToTrip = function(tripId, stopObj) {
     // // add today's date as end date to current stop
-    if ($scope.pastStop) { // if stop is in past
+    if ($scope.pastStop) { // if stop is in past, i.e. box checked
       // add new stop
       tripOps.addStopToTrip(tripId, stopObj);
       // getCurrData req'd?
@@ -63,8 +60,8 @@ trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, dataOps,
       //   }
       // );
     }
-    tripOps.getCurrData(currAuth.uid, $scope); // update data
-    $scope.newStopObj = {};     // clear obj (ang date input err)
+    dataOps.getCurrData(currAuth.uid, $scope); // update data
+    $scope.newStopObj = {}; // clear obj (ang date input err)
   };
 
   // will only be used if current trip is active
@@ -73,7 +70,8 @@ trvlApp.controller('tripCtrl', function($scope, $stateParams, currAuth, dataOps,
     .then(
       function(response) {
         console.log('trip id: ', tripId, 'ended.');
-      }
+      },
+      util.rejectLog
     );
   };
 

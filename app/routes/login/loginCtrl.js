@@ -1,4 +1,4 @@
-trvlApp.controller('loginCtrl', function(constants, $scope, $state, authSvc) {
+trvlApp.controller('loginCtrl', function(constants, util, $scope, $state, authSvc) {
 
   $scope.newuser = false; // default view: login, not new user reg
 
@@ -23,8 +23,9 @@ trvlApp.controller('loginCtrl', function(constants, $scope, $state, authSvc) {
     authSvc.register(newUserObj) // run register method
     .then(
       function(response) {
+        alert("Registration successful. Please log in.");
         $scope.newuser = false; // once completed, change to login form
-      }
+      }    
     );
   };
 

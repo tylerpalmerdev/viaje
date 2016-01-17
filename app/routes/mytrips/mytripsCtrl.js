@@ -7,12 +7,7 @@ trvlApp.controller('mytripsCtrl', function($scope, currAuth, dataOps, mytripsOps
   dataOps.getCurrData(currAuth.uid, $scope);
 
   // $scope.userTrips
-  mytripsOps.getAllTripsForUser(currAuth.uid)
-  .then(
-    function(response) {
-      $scope.userTrips = response;
-    }
-  );
+  mytripsOps.getAllTripsForUser(currAuth.uid, $scope);
 
   // -- UI VARIABLES & FUNCTIONS -- //
   $scope.getMapUrl = function(lat, lon) {

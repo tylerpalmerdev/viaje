@@ -4,13 +4,25 @@ trvlApp.service('tripOps', function(util, $q, userSvc, tripSvc, stopSvc) {
   */
 
   // allStops: pull all stops for a trip (trip)
-  this.getTripStopsData = function(tripId) {
-    return stopSvc.getStopsForTrip(tripId);
+  this.getTripStopsData = function(tripId, scopeObj) {
+    stopSvc.getStopsForTrip(tripId)
+    .then(
+      function(response) {
+        scopeObj.allStops = response;
+      },
+      util.rejectLog
+    );
   };
 
   //
-  this.getTripData = function(uid, tripId) {
-    return tripSvc.getTripObj(uid, tripId);
+  this.getTripData = function(uid, tripId, scopeObj) {
+    tripSvc.getTripData(uid, tripId)
+    .then(
+      function(response) {
+        scopeObj.tripData = response;
+      },
+      util.rejectLog
+    );
   };
 
   // will do everything to end a trip, should only be used if trip.isActive = true
