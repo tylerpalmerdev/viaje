@@ -2,19 +2,7 @@ trvlApp.service('tripOps', function(util, $q, userSvc, tripSvc, stopSvc) {
   /*
   doesn't pull any data from firebase directly, uses other services
   */
-
-  // allStops: pull all stops for a trip (trip)
-  this.getTripStopsData = function(tripId, scopeObj) {
-    stopSvc.getStopsForTrip(tripId)
-    .then(
-      function(response) {
-        scopeObj.allStops = response;
-      },
-      util.rejectLog
-    );
-  };
-
-  //
+  // get basic data about trip
   this.getTripData = function(uid, tripId, scopeObj) {
     tripSvc.getTripData(uid, tripId)
     .then(
@@ -25,50 +13,73 @@ trvlApp.service('tripOps', function(util, $q, userSvc, tripSvc, stopSvc) {
     );
   };
 
-  // will do everything to end a trip, should only be used if trip.isActive = true
-  this.endTripForUser = function(uid, tripId) {
-    var def = $q.defer();
-    var currTimestamp = Date.parse(new Date().toString()); // for setting end timestamps
-    userSvc.changeUserOnTrip(uid, false) // set userObj.onTrip = false;
+  // get data about all stops for a trip
+  this.getTripStopsData = function(tripId, scopeObj) {
+    stopSvc.getStopsForTrip(tripId)
     .then(
       function(response) {
-        console.log("changed user.onTrip to false");
-        return tripSvc.isTripActive(uid, tripId, false); // set trip.isActive to false
-      }
-    )
-    .then(
-      function(response) {
-        console.log("set trip to inactive.");
-        return tripSvc.setTripEndDate(uid, tripId, currTimestamp); // set trip end date to right now
-      }
-    )
-    .then(
-      function(response) {
-        console.log("set trip end date to ", currTimestamp);
-        def.resolve(response); // resolve promise with response from setting trip end date
-      }
+        scopeObj.allStops = response;
+      },
+      util.rejectLog
     );
-    return def.promise;
   };
 
-  this.addStopToTrip = function(tripId, stopObj) {
-    // if they exist, parse dates into numerical timestamp to store in fb and parse in angular
-    if (stopObj.arriveTimestamp) {
-      stopObj.arriveTimestamp = Date.parse(stopObj.arriveTimestamp);
-    } else if (!stopObj.arriveTimestamp) { // if no arrive stamp, set to now
-      stopObj.arriveTimestamp = Date.parse(new Date().toString());
+  // DONE requires both start & end date to be present, and in past
+  this.addPastStopToTrip = function(tripId, stopObj, scopeObj) {
+    // make sure all fields have been entered
+    if (!util.isDef([stopObj.stopData, stopObj.arriveTimestamp, stopObj.departTimestamp])) {
+      alert("Please select a city and both start and end dates for your past stop.");
+      return false;
     }
-
-    if (stopObj.departTimestamp) { // parse depart date of object if it exists
-      stopObj.departTimestamp = Date.parse(stopObj.departTimestamp);
+    // parse timestamps
+    stopObj.arriveTimestamp = util.parseStamp(stopObj.arriveTimestamp);
+    stopObj.departTimestamp = util.parseStamp(stopObj.departTimestamp);
+    var now = util.nowStamp();
+    // if depart/arrive timestamp are not in the past, return false
+    if (stopObj.arriveTimestamp > now || stopObj.departTimestamp > now) {
+      alert("Start and end dates for a past stop must both be in the past.");
+      return false;
     }
+    stopSvc.addStop(tripId, stopObj)
+    .then(
+      function(response) {
+        console.log("New stop added with ID of", response.key());
+      },
+      util.rejectLog
+    );
+  };
 
-    return stopSvc.addStop(tripId, stopObj); // return promise to ctrl
+  // only used by active trip. prevent if new stop city not entered
+  this.addCurrentStopToTrip = function(currTripId, newStopObj, lastStopId) {
+    if (!util.isDef([newStopObj.stopData])) {
+      alert("Please select a city for your new stop.");
+      return false;
+    }
+    var now = util.nowStamp(); // for use as departTimestamp of last stop
+    // new stop starts a little bit later than "now" to help with sorting
+    newStopObj.arriveTimestamp = now + 5;
+    // set up $q.all() to run multiple promises at once, resolve when all resolve
+    var all = $q.all([
+      stopSvc.setStopDepartDate(currTripId, lastStopId, now),
+      stopSvc.addStop(currTripId, newStopObj)
+    ]);
+    return all; // return promise of resolving all promises in all
+  };
+
+  // will do everything to end a trip, should only be used if trip.isActive = true
+  this.endTripForUser = function(uid, tripId, lastStopId) {
+    var now = util.nowStamp(); // for setting end timestamps
+    // create a single promise that resolves when all promises inside of it resolve
+    var all = $q.all([
+      userSvc.changeUserOnTrip(uid, false),
+      tripSvc.endTrip(uid, tripId, now),
+      stopSvc.setStopDepartDate(tripId, lastStopId, now)
+    ]);
+    return all;
   };
 
   this.addEndDateToStop = function(tripId, stopId, endDate) {
     return stopSvc.setStopDepartDate(tripId, stopId, endDate); // return promise to CTRL
   };
 
-
-});
+}); //END

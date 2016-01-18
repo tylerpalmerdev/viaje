@@ -12,67 +12,63 @@ trvlApp.service('dataOps', function(util, userSvc, tripSvc, stopSvc) {
     );
   };
 
-  // currData: get active (trip.isActive = true) OR last trip ID for user and last stop Id for trip. Last based on end date.
+  // currData: get active (trip.isActive = true) OR last trip ID for user and last stop Id for trip. "Last" based on most recent end date.
   this.getCurrData = function(uid, scopeObj) {
-
-    var currData = {}; // last tripId, last stopId, tripIsActive =  t/f
-    tripSvc.getTripsForUser(uid) //"-K7qmc3o65fsEgmAkzHw"
-    .then(
-      function(response) {
-        var userTrips = response; // fb array
-        var latestEnd = 0; // set as 0 to compare
-        for (var i = 0; i < userTrips.length; i++) {
-          var trip = userTrips[i];
-          var endTimestamp = trip.endTimestamp; // convert to number to compare
-          if (trip.isActive === true) { // if active trip is found, set data and return:
-            currData.tripIsActive = true;
-            currData.lastTripId = trip.$id;
-            currData.lastTripName = trip.name;
-            break; // break out of for loop if active trip found
-          }
-          else { // if active trip not found:
+    var currData = {}; // last tripId/name, last stopId/name, tripIsActive (t/f)
+    tripSvc.getTripsForUser(uid) // get all trips for user
+    .then( // when loaded:
+      function(response) { // response is firebase array
+        var latestEnd = 0; // to see which trip is latest, set as 0 to compare
+        for (var i = 0; i < response.length; i++) {
+          var trip = response[i];
+          var endTimestamp = trip.endTimestamp; // in ms timestamp format
+          if (trip.isActive === true) { // if active trip is found
+            currData.tripIsActive = true; // set data
+            currData.lastTripId = trip.$id; // ""
+            currData.lastTripName = trip.name; // ""
+            break; // break out of for loop since active trip was found
+          } else if (!endTimestamp) { // if trip is inactive but has no end date
+            console.log("trip id", trip.$id, "has undefined end date and is not set to 'isActive. Please address.'");
+            continue; // continue because trip has corrupt end date data
+          } else if (endTimestamp > latestEnd) {
+            latestEnd = endTimestamp;
             currData.tripIsActive = false;
-            // console.log(endTimestamp);
-            if (!endTimestamp) {
-              // console.log("trip has undefined end date and is not set to 'isActive'");
-            } else if (endTimestamp > latestEnd) {
-              latestEnd = endTimestamp;
-              currData.lastTripName = trip.name;
-              currData.lastTripId = trip.$id; // set latest trip equal to trip id
-            }
+            currData.lastTripName = trip.name;
+            currData.lastTripId = trip.$id; // set latest trip equal to trip id
           }
         }
+        // after last trip is established, get data about last stop on last trip
         return stopSvc.getStopsForTrip(currData.lastTripId);
       },
       util.rejectLog // log for promise reject
     )
-    .then(
-      function(response) {
-        var tripStops = response; // arr
-        var latest = 0; // for comparison
-        for (var k = 0; k < tripStops.length; k++) {
-          var stop = tripStops[k];
+    .then( // once loaded:
+      function(response) { // response is arr of all stops for trip
+        var latestDepart = 0; // for comparison
+        for (var k = 0; k < response.length; k++) { // for all stops in trip:
+          var stop = response[k];
           var departStamp = stop.departTimestamp;
           var arriveStamp = stop.arriveTimestamp;
-          if (!departStamp && !arriveStamp) {
-            console.log("a stop on the user's latest trip has no start or end date.");
-          } else if (!departStamp && arriveStamp > latest) { // if no depart but arrived later
-            // console.log(arriveStamp);
-            latest = arriveStamp;
+          if (!(util.isDef(departStamp) || util.isDef(arriveStamp))) {
+            console.log("Stop", stop.$id, "has no start or end date. Plese address.");
+            continue; // skip this stop, it has no start or end data
+          } else if (!departStamp && arriveStamp > latestDepart) { // if no depart but arrived later
+            latestDepart = arriveStamp;
             currData.lastStop = stop.stopData.placeString;
             currData.lastStopData = stop.stopData;
             currData.lastStopId = stop.$id;
-          } else if (departStamp && departStamp > latest) { // if depart stamp is present && later
-            // console.log(departStamp);
-            latest = departStamp;
+          } else if (departStamp && departStamp > latestDepart) { // if depart stamp is present && later
+            latestDepart = departStamp;
             currData.lastStop = stop.stopData.placeString;
             currData.lastStopId = stop.$id;
           }
         }
-        scopeObj.currData = currData; // once all done, final step, set scopeObj.currData to result
+        // once all done, final step, set scopeObj.currData to result.
+        // this allows the function to be applied to a ctrl's $scope in one line.
+        scopeObj.currData = currData;
       },
       util.rejectLog // log for promise reject
     );
   };
 
-});
+}); //END

@@ -1,51 +1,52 @@
-trvlApp.service('userSvc', function($firebaseArray, $firebaseObject, $q, util, constants) {
+trvlApp.service('userSvc', function($firebaseArray, $firebaseObject, util, constants) {
   /*
   RESPONSIBILITY: adding, getting, and deleting data from /users/ in fb
-  NO INTERNAL SERVICE DEPENDENCIES (except for constants)
+  NO INTERNAL SERVICE DEPENDENCIES (except for constants & util)
+  All methods return promises
   */
-
-  // base reference for users data in firebase
+  // firebase ref to /users/ data
   var baseRef = new Firebase(constants.fbBaseUrl + '/users/');
+
+  // get user data obj from fb /users/:uid
+  this.getUserRefObj = function(uid) {
+    // return promise of getting user data obj when loaded
+    return $firebaseObject(baseRef.child(uid)).$loaded();
+  };
 
   // add new user data to /users/ after the user has 'signed up' via authSvc
   this.addDataForNewUser = function(uid, newUserObj) {
-    var refObj = $firebaseObject(baseRef.child(uid)); // get ref obj for user from fb
-    refObj.email = newUserObj.email;
-    refObj.name = newUserObj.name;
-    refObj.homeCity = newUserObj.homeCity; // obj of data about city
-    refObj.onTrip = false; // default: user starts out as not on trip.
-    refObj.userStats = {
-      trips: 0,
-      countries: 0,
-      cities: 0,
-      entries: 0,
-      distance: 0
-    };
-    return refObj.$save(); // return promise of saving data to fb obj
-  };
-
-  // get user data from fb /users/:uid
-  this.getUserRefObj = function(uid) {
-    var userObj = $firebaseObject(baseRef.child(uid));
-    return userObj.$loaded(); // return promise of getting user data obj when loaded
+    return this.getUserRefObj(uid)
+    .then(
+      function(response) {
+        response.email = newUserObj.email;
+        response.name = newUserObj.name;
+        response.homeCity = newUserObj.homeCity; // home city data added by citySearch directive
+        response.onTrip = false; // default: user starts out as not on trip.
+        response.userStats = {
+          trips: 0,
+          countries: 0,
+          cities: 0,
+          entries: 0,
+          distance: 0
+        };
+        return response.$save(); // return promise of saving new userObj
+      },
+      util.rejectLog
+    );
   };
 
   // set val of userObj.onTrip (true or false)
   this.changeUserOnTrip = function(uid, bool) {
     // get user obj w/ ref from uid
-    var def = $q.defer();
-    var userObj = $firebaseObject(baseRef.child(uid));
-    userObj.$loaded() // wait until object has loaded
+    return this.getUserRefObj(uid)
     .then(
-      function(response) { // when loaded
-        userObj.onTrip = bool; //onTrip property to T/F XX
-        userObj.$save();
-        def.resolve('user obj.onTrip updated to ' + bool); // save obj, return promise
+      function(response) { // response is user ref obj
+        response.onTrip = bool; // change userObj.onTrip to bool
+        // return promise that resolves when userObj.onTrip is saved
+        return response.$save();
       },
       util.rejectLog
     );
-    return def.promise;
   };
 
-//BOTTOM
-});
+}); //END

@@ -30,13 +30,13 @@
       </div>
       <div ng-show="userData.onTrip" class="trip-info-box" class="trip-info-box">
         <h4>Currently Visiting: {{currData.lastStopData.geo.city}}, {{currData.lastStopData.geo.city}}</h4>
-        <img src="{{getMapUrl(currData.lastStopData.geo.city, currData.lastStopData.geo.city)}}"></img>
+        <img ng-src="{{getMapUrl(currData.lastStopData.geo.city, currData.lastStopData.geo.city)}}"></img>
       </div>
     </div>
 
     <div class="main-panel col-md-9">
       <uib-accordion close-others="oneAtATime" class="row">
-        <uib-accordion-group heading="{{trip.name}}: {{trip.startTimestamp | date: 'MM/dd/yyyy'}} - {{trip.endTimestamp | date: 'MM/dd/yyyy'}}" ng-repeat="trip in userTrips">
+        <uib-accordion-group heading="{{trip.name}}: {{trip.startTimestamp | date: 'MM/dd/yyyy'}} - {{trip.endTimestamp | date: 'MM/dd/yyyy'}}" ng-repeat="trip in userTrips | orderBy: '-endTimestamp'">
           <a ui-sref="trip({tripId: trip.$id})">Go To {{trip.name}} Trip Page</a>
           <img src="http://blondietravelblog.com/wp-content/uploads/2012/03/Route-66-map.png"/>
         </uib-accordion-group>

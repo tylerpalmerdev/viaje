@@ -13,14 +13,15 @@ trvlApp.service('mytripsOps', function(util, $q, userSvc, tripSvc, stopSvc) {
     );
   };
 
-  // add trip for user, based on new start trip.
-  // long promise chain, with each step dependent on something that the previous generates, mainly IDs from new records
+  // Start new trip for user. Only possible if user not already on trip.
   this.startTripForUser = function(uid, tripObj, firstStopObj) {
+    // check to make sure user entered values for trip name & first stop
+    var def = $q.defer(); // create deferrer
     if (!util.isDef([tripObj.name, firstStopObj.stopData])) {
       alert("Please enter a name and first stop for your trip.");
+      def.reject();
     } else {
-      var def = $q.defer(); // create deferrer
-      var newTripId; // set now to use for final nav to trip pag
+      var newTripId; // declare now to use for final nav to trip page
       tripObj.isActive = true; // set trip as active
       var now = util.nowStamp();
       tripObj.startTimestamp = now;
@@ -50,8 +51,8 @@ trvlApp.service('mytripsOps', function(util, $q, userSvc, tripSvc, stopSvc) {
         },
         util.rejectLog
       );
-      return def.promise; // return deferrer promise
     }
+    return def.promise; // return deferrer promise
   };
 
   this.addCompletedTripForUser = function(uid, tripObj) {

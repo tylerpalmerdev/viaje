@@ -1,67 +1,65 @@
 <div class="view-body full-screen-photo container-fluid">
-  <div id="user-access-form" class="vertical-align col-xs-12 col-md-offset-2 col-md-8 col-lg-6 col-lg-offset-3">
-    <div class="heading-box">
-      <h1>VIAJE</h1>
-      <h5>Track your travel! Log trips you take and stops along the way.</h5>
-    </div>
-    <!--login form, visible by default-->
-    <form ng-hide="newuser" class="login-form-inputs form-horizontal">
-      <p>
-        Login below, or <a href="" ng-click="toggleForm()">Sign Up</a> if you're new.
-      </p>
-      <div class="form-group">
-        <label for="emailInput" class="col-sm-2 control-label">Email</label>
-        <div class="col-sm-10">
-           <input ng-model="user.email" type="email" class="form-control" id="emailInput" placeholder="Email">
-        </div>
+  <div class="row-wrapper row">
+    <div id="user-access-form" class="vertical-align col-xs-12 col-md-offset-2 col-md-8 col-lg-6 col-lg-offset-3">
+      <div class="heading-box">
+        <h1>VIAJE</h1>
+        <h5>Track your travel! Log trips you take and stops along the way.</h5>
       </div>
-      <div class="form-group">
-        <label for="pwInput" class="col-sm-2 control-label">Password</label>
-        <div class="col-sm-10">
-           <input ng-model="user.password" type="password" class="form-control" id="pwInput" placeholder="Password">
-        </div>
-      </div>
-      <button ng-click="login(user)" class="col-sm-6 col-sm-offset-3 btn btn-primary" type="submit">Log In</button>
-    </form>
-
-    <!--signup form, hidden by default-->
-    <form ng-show="newuser" class="signup-form-inputs form-horizontal">
-      <p>
-        Sign up below, or <a href="" ng-click="toggleForm()">Login</a> if you're already registered.
-      </p>
-
-      <div class="form-group">
-          <label for="new-username" class="col-xs-2 control-label">Full Name </label>
+      <!--login form, visible by default-->
+      <form ng-hide="newuser" class="login-form-inputs form-horizontal">
+        <p>
+          Login below, or <a href="" ng-click="toggleForm()">Sign Up</a> if you're new.
+        </p>
+        <div class="form-group">
+          <label for="emailInput" class="col-sm-2 control-label">Email</label>
           <div class="col-sm-10">
-            <input ng-model="newUser.name" type="text" class="form-control" id="new-username" placeholder="Enter Full Name">
+             <input ng-model="user.email" type="email" class="form-control" id="emailInput" placeholder="Email">
           </div>
-      </div>
-
-      <div class="form-group">
-        <label for="new-email-input" class="col-xs-2 control-label">Email</label>
-        <div class="col-sm-10">
-           <input ng-model="newUser.email" type="email" class="form-control" id="new-email-input" placeholder="Enter Email Address">
         </div>
-      </div>
-
-      <div class="form-group">
-        <label for="new-pw-input" class="col-sm-2 control-label">Password: </label>
-        <div class="col-sm-10">
-           <input ng-model="newUser.password" type="password" class="form-control" id="new-pw-input" placeholder="Choose Password">
+        <div class="form-group">
+          <label for="pwInput" class="col-sm-2 control-label">Password</label>
+          <div class="col-sm-10">
+             <input ng-model="user.password" type="password" class="form-control" id="pwInput" placeholder="Password">
+          </div>
         </div>
-      </div>
+        <button ng-click="login(user)" class="col-sm-6 col-sm-offset-3 btn btn-primary" type="submit">Log In</button>
+      </form>
 
-      <div class="form-group">
-        <label for="place-search-input" class="col-sm-2 control-label">Home City: </label>
-        <div class="col-sm-10">
-          <city-search city-data="newUser.homeCity"></city-search>
+      <!--signup form, hidden by default-->
+      <form ng-show="newuser" class="signup-form-inputs form-horizontal">
+        <p>
+          Sign up below, or <a href="" ng-click="toggleForm()">Login</a> if you're already registered.
+        </p>
+
+        <div class="form-group">
+            <label for="new-username" class="col-xs-2 control-label">Full Name </label>
+            <div class="col-sm-10">
+              <input ng-model="newUser.name" type="text" class="form-control" id="new-username" placeholder="Enter Full Name">
+            </div>
         </div>
-      </div>
 
-      <!-- {{newUser.homeCity}} -->
+        <div class="form-group">
+          <label for="new-email-input" class="col-xs-2 control-label">Email</label>
+          <div class="col-sm-10">
+             <input ng-model="newUser.email" type="email" class="form-control" id="new-email-input" placeholder="Enter Email Address">
+          </div>
+        </div>
 
+        <div class="form-group">
+          <label for="new-pw-input" class="col-sm-2 control-label">Password: </label>
+          <div class="col-sm-10">
+             <input ng-model="newUser.password" type="password" class="form-control" id="new-pw-input" placeholder="Choose Password">
+          </div>
+        </div>
 
-      <button ng-click="signup(newUser)" class="col-sm-6 col-sm-offset-3 btn btn-primary" type="submit">Sign Up</button>
-    </form>
+        <div class="form-group">
+          <label for="place-search-input" class="col-sm-2 control-label">Home City: </label>
+          <div class="col-sm-10">
+            <city-search city-data="newUser.homeCity"></city-search>
+          </div>
+        </div>
+        <button ng-click="signup(newUser)" class="col-sm-6 col-sm-offset-3 btn btn-primary" type="submit">Sign Up</button>
+      </form>
+    </div>
   </div>
-</div>
+</div> <!--END-->

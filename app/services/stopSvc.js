@@ -1,58 +1,50 @@
 trvlApp.service('stopSvc', function(constants, util, $firebaseArray, $firebaseObject) {
   /*
   RESPONSIBILITIES: adding/updating/deleting stop data from /stops/ in firebase
-  NO INTERNAL SERVICE DEPENDENCIES (except for constants)
+  NO INTERNAL SERVICE DEPENDENCIES (except for constants & util)
+  All methods return promises
   */
+  // firebase ref to /stops/ data
   var rootRef = new Firebase(constants.fbBaseUrl + '/stops/');
-  // FUNCTIONS TO USE WITHIN THIS SERVICE
-  var getStopsArray = function(tripId) {
-    return $firebaseArray(rootRef.child(tripId));
-  };
 
-  var getStopObject = function(tripId, stopId) {
-    return $firebaseObject(rootRef.child(tripId + "/" + stopId));
-  };
-
-  // METHODS FOR USE BY OTHER SERVICES
+  // get all stops of a trip. return promise that resolves when loaded.
   this.getStopsForTrip = function(tripId) {
-    var tripStopsRef = rootRef.child(tripId); // get fb ref
-    return $firebaseArray(tripStopsRef).$loaded(); // return promise of gettting all trips
+    // return promise of getting all stops, resolves when array is loaded
+    return $firebaseArray(rootRef.child(tripId)).$loaded();
   };
 
-  // THIS WORKS BECAUSE I AM NOT CALLING THE PROMISE THAT I WANT TO RETURN HERE
+  // get data about specific stop. return promise that resolves when loaded.
+  this.getStopObj = function(tripId, stopId) {
+    // return promise of getting a stop obj, resolves when obj is loaded
+    return $firebaseObject(rootRef.child(tripId + "/" + stopId)).$loaded();
+  };
+
+  // add stop to trip. returns promise that resolves when stop is added.
   this.addStop = function(tripId, stopObj) {
-    // later, in trip svc, add stopId to trip.stops array
-    var def = $q.defer();
-    this.getStopsForTrip(tripId) // load stops for trip
-    .then(
-      function(response) { // if successful, response is stops arr
-        return response.$add(stopObj); // add stop to trip and return promise
-      },
-      util.rejectLog
-    )
+    return this.getStopsForTrip(tripId)
     .then(
       function(response) {
-        console.log("Stop added with ID of", response.$key());
-        def.resolve(response);
+        return response.$add(stopObj);
       },
       util.rejectLog
     );
-    return def.promise;
   };
 
+  // changes a stop's departTimestamp. returns a promise that resolves when the change is saved.
   this.setStopDepartDate = function(tripId, stopId, date) { // date in ms
-    var stopObj = getStopObject(tripId, stopId);
-    stopObj.$loaded() // stopObj is promise that object will load
+    return this.getStopObj(tripId, stopId)
     .then(
-      function(response) {
-        stopObj.departTimestamp = date;
-        return stopObj.$save(); // PROMISE
-      }
+      function(response) { // when loaded (response is object):
+        response.departTimestamp = date; // set departTimestamp to date
+        return response.$save(); // PROMISE
+      },
+      util.rejectLog
     );
   };
 
+  //*TO-DO*//
   this.deleteStop = function(tripId, stopId) {
     console.log(tripId, stopId);
   };
 
-});
+}); //END

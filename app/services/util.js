@@ -10,6 +10,10 @@ trvlApp.factory('util', function() {
     rejectLog: function(err) {
       console.log("Promise rejected:", err);
     },
+    rejectDef: function(err) {
+      console.log("Promise rejected:", err);
+      def.reject();
+    },
     nowStamp: function() {
       return Date.parse(new Date().toString());
     },
@@ -19,7 +23,7 @@ trvlApp.factory('util', function() {
     isDef: function(objToCheck) {
       if (Array.isArray(objToCheck)) {
         for (var i = 0; i < objToCheck.length; i++) {
-          if (objToCheck[i] === undefined) {
+          if (objToCheck[i] === undefined || objToCheck[i] === null) {
             return false;
           }
         }

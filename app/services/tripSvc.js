@@ -1,82 +1,74 @@
-trvlApp.service('tripSvc', function($firebaseArray, $firebaseObject, $q, util, constants) {
+trvlApp.service('tripSvc', function($firebaseArray, $firebaseObject, util, constants) {
   /*
   RESPONSIBILITY: adding/updating/removing trip data from firebase in /trips/
-  NO INTERNAL SERVICE DEPENDENCIES (except for constants)
-  All methods return promises (not internal functions)
+  NO INTERNAL SERVICE DEPENDENCIES (except for constants & util)
+  All methods return promises
   */
-
-  // create ref to /trips data in firebase
+  // firebase ref to /trips data
   var rootRef = new Firebase(constants.fbBaseUrl + '/trips/');
-
-  // HELPER FUNCTIONS FOR USE WITHIN THIS SERVICE
-
-  var getTripObj = function(uid, tripId) {
-    return $firebaseObject(rootRef.child(uid + '/' + tripId));
-  };
-
-  var getTripsArray = function(uid) {
-    return $firebaseArray(rootRef.child(uid));
-  };
-
-  // METHODS TO BE ACCESSED OUTSIDE OF THIS SERVICE
 
   // get's data for a user's specific trip
   this.getTripData = function(uid, tripId) {
-    return getTripObj(uid, tripId).$loaded(); // return promise of getting trip obj
+    // return promise of getting trip obj, resolves when obj is loaded
+    return $firebaseObject(rootRef.child(uid + '/' + tripId)).$loaded();
   };
 
   // get all trips for user, based on uid.
   this.getTripsForUser = function(uid) {
-    return getTripsArray(uid).$loaded(); // return promise of getting all trips
+    // return promise of getting all trips, resolves when all trips are loaded
+    return $firebaseArray(rootRef.child(uid)).$loaded();
   };
 
-  // add a trip obj
+  // adds a trip to a user's trips array.
   this.addTripForUser = function(uid, tripObj) {
-    /*
-    needed to create own promise for this function because the $add
-    promise was not returning correctly to mytripsOps
-    */
-    var def = $q.defer();
-    var trips = getTripsArray(uid);
-    trips.$loaded() // when trips array is loaded
+    return this.getTripsForUser(uid)
     .then(
       function(response) {
-        console.log("trips loaded, now adding new trip.");
-        return trips.$add(tripObj); // return promise of adding trip
-      },
-      util.rejectLog
-    )
-    .then(
-      function(response) {
-        console.log('Trip added. Response:', response);
-        def.resolve(response);
+        // returns promise that resolves when new tripObj is added for user
+        return response.$add(tripObj);
       },
       util.rejectLog
     );
-    return def.promise;
   };
 
   // changes tripObj.isActive to true/false
   this.isTripActive = function(uid, tripId, bool) {
-    var tripObj = getTripObj(uid, tripId); // get trip obj
-    tripObj.$loaded() // when trip object loads
+    return this.getTripData(uid, tripId) // get tripObj
     .then(
-      function(response) {
-        tripObj.isActive = bool; // set isActive
-        return tripObj.$save(); // return promise of saving tripObj changes
-      }
+      function(response) { // response is tripObj
+        response.isActive = bool; // set new isActive val
+        // returns promise that resolves when new trip.isActive val is saved
+        return response.$save();
+      },
+      util.rejectLog
     );
   };
 
   // changes tripObj.endTimestamp
   this.setTripEndDate = function(uid, tripId, endDate) { // end date in ms
-    var tripObj = getTripObj(uid, tripId); // get trip obj
-    tripObj.$loaded() // when trip object loads
+    return this.getTripData(uid, tripId) // get tripObj
     .then(
-      function(response) {
-        tripObj.endTimestamp = endDate; // set end date
-        return tripObj.$save(); // return promise of saving tripObj changes
-      }
+      function(response) { // response is tripObj
+        response.endTimestamp = endDate; // set new endDate val
+        // returns promise that resolves when new trip.isActive val is saved
+        return response.$save();
+      },
+      util.rejectLog
     );
   };
-});
+
+  // combination of above two, as running them simultaneously causes one not to work.
+  this.endTrip = function(uid, tripId, endDate) {
+    return this.getTripData(uid, tripId) // get tripObj
+    .then(
+      function(response) { // response is tripObj
+        response.endTimestamp = endDate; // set endDate val
+        response.isActive = false; // set isActive val
+        // returns promise that resolves when new values are saved
+        return response.$save();
+      },
+      util.rejectLog
+    );
+  };
+
+}); // END

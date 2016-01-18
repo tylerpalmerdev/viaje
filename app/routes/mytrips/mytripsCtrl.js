@@ -1,20 +1,17 @@
 trvlApp.controller('mytripsCtrl', function($scope, currAuth, dataOps, mytripsOps, constants, util) {
-  // -- GET DATA FOR MY TRIPS $SCOPE -- //
-  // $scope.userData
-  dataOps.getUserData(currAuth.uid, $scope);
+  // -- $SCOPE VARIABLES -- //
+  dataOps.getUserData(currAuth.uid, $scope); // $scope.userData
+  dataOps.getCurrData(currAuth.uid, $scope); // $scope.currData
+  mytripsOps.getAllTripsForUser(currAuth.uid, $scope); // $scope.userTrips
+  // set these as empty objects to help validate forms in mytripsOps
+  $scope.newTrip = {};
+  $scope.firstStopObj = {};
+  $scope.oldTripObj = {};
 
-  // $scope.currData (last stop, last trip)
-  dataOps.getCurrData(currAuth.uid, $scope);
-
-  // $scope.userTrips
-  mytripsOps.getAllTripsForUser(currAuth.uid, $scope);
-
-  // -- UI VARIABLES & FUNCTIONS -- //
+  // -- $SCOPE FUNCTIONS -- //
   $scope.getMapUrl = function(lat, lon) {
     return util.getMapUrl(lat, lon);
   };
-
-  // -- MY TRIPS $SCOPE FUNCTIONS -- //
 
   // start a new trip (start date of today, first stop chosen in view)
   $scope.startTrip = function(newTripObj, firstStopObj) {
@@ -27,12 +24,13 @@ trvlApp.controller('mytripsCtrl', function($scope, currAuth, dataOps, mytripsOps
     );
   };
 
+  // add a trip from the past, start/end dates in past
   $scope.addPastTrip = function(oldTripObj) {
     mytripsOps.addCompletedTripForUser(currAuth.uid, oldTripObj);
     $scope.oldTripObj = {}; // reset for ang date input error
   };
 
-  // log to check $scope //
+  // log to check $scope
   console.log($scope);
 
 });
