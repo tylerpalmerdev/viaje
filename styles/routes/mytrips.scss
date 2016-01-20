@@ -3,7 +3,7 @@
 $background-color: #f5f5f5;
 $panel-margin: 20px;
 $menu-height: 60px;
-$main-box-shadow: 5px 5px 5px #888888;
+$main-box-shadow: 5px 5px 5px 5px #888888;
 
 .view-body {
   padding-top: $menu-height;
@@ -11,24 +11,33 @@ $main-box-shadow: 5px 5px 5px #888888;
 
 .side-panel {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column nowrap;
   justify-content: space-between;
   align-items: center;
   margin-bottom: $panel-margin;
   background-color: $background-color;
   padding: $panel-margin;
 
-  .trip-info {
-    flex-grow: 1;
-    h1 {
-      margin-top: 0;
-    }
+  .top-content {
+    display: flex;
+    flex-flow: column nowrap;
   }
 
-  .user-stats {
-    padding: $panel-margin;
-    box-shadow: $main-box-shadow;
-    flex-grow: 2;
+  .bottom-content {
+    display: flex;
+    flex-flow: column nowrap;
+    .trip-info {
+      flex-grow: 1;
+      h1 {
+        margin-top: 0;
+      }
+    }
+
+    .user-stats {
+      padding: $panel-margin;
+      box-shadow: $main-box-shadow;
+      flex-grow: 2;
+    }
   }
 
   .location-box {
@@ -37,9 +46,37 @@ $main-box-shadow: 5px 5px 5px #888888;
   }
 }
 
+@media (max-width: 992px) {
+  .side-panel {
+    flex-flow: row nowrap;
+    justify-content: space-between;
+
+    .bottom-content {
+      flex-grow: 2;
+      flex-flow: row nowrap;
+      align-content: space-between;
+      .location-box, .user-stats {
+        margin-left: 20px;
+      }
+    }
+  }
+
+}
+
 @media (max-width: 600px) {
   .side-panel {
     flex-flow: column nowrap;
+
+    .top-content {
+      flex-flow: row nowrap;
+      align-items: space-between;
+
+      h1 {
+        font-size: 30px;
+        margin-right: 20px;
+        margin-top: 10px;
+      }
+    }
   }
 }
 

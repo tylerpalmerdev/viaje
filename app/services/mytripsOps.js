@@ -1,4 +1,4 @@
-trvlApp.service('mytripsOps', function(util, $q, userSvc, tripSvc, stopSvc) {
+trvlApp.service('mytripsOps', function(util, $q, $state, userSvc, tripSvc, stopSvc) {
   /*
   Functions for mytrips view
   */
@@ -46,7 +46,7 @@ trvlApp.service('mytripsOps', function(util, $q, userSvc, tripSvc, stopSvc) {
       .then( // after userObj.onTrip set to true:
         function(response) {
           console.log("User's onTrip property set to true with response of:", response);
-          // $state.go('trip/' + newTripId);
+          $state.go('trip', {tripId: newTripId});
           def.resolve(response); // resolve promise,
         },
         util.rejectLog

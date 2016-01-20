@@ -4,21 +4,44 @@ $trip-info-margin: 20px;
 $stop-box-border: 1px solid black;
 $stop-box-height: 200px; // same as map
 $stop-box-internal-margin: 15px;
+$main-box-shadow: 5px 5px 5px 5px #888888;
 
-.trip-info-container {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: $trip-info-margin;
 
-  .trip-heading-container {
-    margin-left: $trip-info-margin;
-
-    h2 {
-      margin: 0;
-    }
+.trip-heading-container {
+  h2, h4 {
+    text-align: center;
   }
+}
+
+.button-container {
+  text-align: center;
+  button {
+    margin-top: 10px;
+  }
+}
+
+.trip-stats {
+  box-shadow: $main-box-shadow;
+  padding: $trip-info-margin;
+  margin-top: $trip-info-margin;
+}
+
+@media (max-width: 992px) {
+  .trip-sidebar-top {
+    flex-grow: 3;
+  }
+
+  .trip-stats, .location-box {
+    flex-grow: 2;
+  }
+
+  .location-box {
+    margin-left: $trip-info-margin;
+  }
+}
+
+.form-container {
+  padding-left: $stop-box-internal-margin * 2;
 }
 
 .stop-box {

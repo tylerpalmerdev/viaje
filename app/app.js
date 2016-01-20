@@ -1,11 +1,6 @@
 // create angular app
 var trvlApp = angular.module('trvlApp', ['ui.router', 'firebase', 'ui.bootstrap', 'ngAnimate']);
 
-// auth check function to use with restricted views
-var authCheck = function(authSvc, $firebaseAuth) {
-  return authSvc.getCurrentAuth().$requireAuth();
-};
-
 // config angular app with routes, using $stateProvider
 trvlApp.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
@@ -24,7 +19,9 @@ trvlApp.config(function($stateProvider, $urlRouterProvider) {
     templateUrl: 'app/routes/mytrips/mytripsTmpl.html',
     controller: 'mytripsCtrl',
     resolve: {
-      currAuth: authCheck
+      currAuth: function(authSvc) {
+        return authSvc.isLoggedIn();
+      }
     }
   })
   .state('trip', {
@@ -32,7 +29,9 @@ trvlApp.config(function($stateProvider, $urlRouterProvider) {
     templateUrl: 'app/routes/trip/tripTmpl.html',
     controller: 'tripCtrl',
     resolve: {
-      currAuth: authCheck
+      currAuth: function(authSvc) {
+        return authSvc.isLoggedIn();
+      }
     }
   });
 

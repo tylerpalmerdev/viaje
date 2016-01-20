@@ -2,35 +2,38 @@
 <div class="view-body container-fluid">
   <div class="row row-wrapper">
     <div class="side-panel col-md-3">
-      <div ng-hide="userData.onTrip" class="trip-info">
+      <div class="top-content">
         <h1>MY TRIPS</h1>
-        <h5>Not currently on a trip.</h5>
-        <h4>Latest trip: <a ui-sref="trip({tripId: currData.lastTripId})">{{currData.lastTripName}}</a></h4>
+        <div ng-hide="userData.onTrip" class="trip-info">
+          <h5>Not currently on a trip.</h5>
+          <h4>Latest trip: <a ui-sref="trip({tripId: currData.lastTripId})">{{currData.lastTripName}}</a></h4>
+        </div>
+        <div ng-show="userData.onTrip">
+          <h5>I'm on a trip!</h5>
+          <h4>Current Trip: <a ui-sref="trip({tripId: currData.lastTripId})">{{currData.lastTripName}}</a></h4>
+        </div>
       </div>
-      <div ng-show="userData.onTrip">
-        <h1>MY TRIPS</h1>
-        <h5>I'm on a trip!</h5>
-        <h4>Current Trip: <a ui-sref="trip({tripId: currData.lastTripId})">{{currData.lastTripName}}</a></h4>
-      </div>
-      <div class=user-stats>
-        <h5><em>User Stats:</em></h5>
-        <!-- <p><strong>Trips: </strong> {{userData.userStats.trips}}</p>
-        <p><strong>Cities: </strong> {{userData.userStats.cities}}</p>
-        <p><strong>Countries: </strong> {{userData.userStats.countries}}</p>
-        <p><strong>Miles: </strong> {{userData.userStats.distance}}</p> -->
-        <p><strong>Trips: </strong> 3 </p>
-        <p><strong>Cities: </strong> 8</p>
-        <p><strong>Countries: </strong> 5</p>
-        <p><strong>Miles: </strong> 34,022</p>
-      </div>
-      <div ng-hide="userData.onTrip" class="location-box">
-        <h5>Currently at home in:</h5>
-        <h4>{{userData.homeCity.geo.city}}, {{userData.homeCity.geo.country}}</h4>
-        <img src="{{getMapUrl(userData.homeCity.geo.lat, userData.homeCity.geo.lng)}}"></img>
-      </div>
-      <div ng-show="userData.onTrip" class="trip-info-box" class="trip-info-box">
-        <h4>Currently Visiting: {{currData.lastStopData.geo.city}}, {{currData.lastStopData.geo.city}}</h4>
-        <img ng-src="{{getMapUrl(currData.lastStopData.geo.city, currData.lastStopData.geo.city)}}"></img>
+      <div class="bottom-content">
+        <div class=user-stats>
+          <h5><em>User Stats:</em></h5>
+          <!-- <p><strong>Trips: </strong> {{userData.userStats.trips}}</p>
+          <p><strong>Cities: </strong> {{userData.userStats.cities}}</p>
+          <p><strong>Countries: </strong> {{userData.userStats.countries}}</p>
+          <p><strong>Miles: </strong> {{userData.userStats.distance}}</p> -->
+          <p><strong>Trips: </strong> 3 </p>
+          <p><strong>Cities: </strong> 8</p>
+          <p><strong>Countries: </strong> 5</p>
+          <p><strong>Miles: </strong> 34,022</p>
+        </div>
+        <div ng-hide="userData.onTrip" class="location-box">
+          <h5>Currently at home in:</h5>
+          <h4>{{userData.homeCity.geo.city}}, {{userData.homeCity.geo.country}}</h4>
+          <img src="{{getMapUrl(userData.homeCity.geo.lat, userData.homeCity.geo.lng)}}"></img>
+        </div>
+        <div ng-show="userData.onTrip" class="location-box">
+          <h4>Currently Visiting:</h4> <h5>{{currData.lastStopData.geo.city}}, {{currData.lastStopData.geo.country}}</h5>
+          <img ng-src="{{getMapUrl(currData.lastStopData.geo.city, currData.lastStopData.geo.city)}}"></img>
+        </div>
       </div>
     </div>
 

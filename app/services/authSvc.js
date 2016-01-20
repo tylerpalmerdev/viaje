@@ -36,12 +36,22 @@ trvlApp.service('authSvc', function($firebaseObject, $firebaseArray, $firebaseAu
     return authObj.$authWithPassword(userObj);
   };
 
-  // get current auth status of user, e.g. to see if they can go to route
-  this.getCurrentAuth = function() {
-    return $firebaseAuth(baseRef);
+  // check if user is logged in
+  this.isLoggedIn = function() {
+    return authObj.$requireAuth()
+    .then(
+      function(response) {
+        console.log("user logged in. allowing access to private page.");
+        return response;
+      },
+      function(err) {
+        console.log("user not logged in, redirecting to login page.");
+        $state.go('login');
+      }
+    );
   };
 
-  // new get current auth status of user, returns promise that rejects if user logged out [REFACTOR WITH CURR AUTH FCN INTO ONE CHECK AUTH FUNCTION FOR ALL ROUTES THAT RESOLVES IF LOGGED IN REJECTS IF LOGGED OUT]
+  // new get current auth status of user, returns promise that rejects if user logged out
   this.isLoggedOut = function() {
     var auth = $firebaseAuth(baseRef); // get auth obj
     var def = $q.defer(); // create deferrer
@@ -49,6 +59,7 @@ trvlApp.service('authSvc', function($firebaseObject, $firebaseArray, $firebaseAu
     .then(
       function(response) { // if promise resolves, user is logged in, reject promise
         console.log('user loggged in, not allowed to login page.');
+        $state.go('mytrips');
         def.reject();
       },
       function(err) { // if promise rejects, user is not logged in, resolve promise because they are allowed to login

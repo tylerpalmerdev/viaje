@@ -1,12 +1,6 @@
 // create angular app
 var trvlApp = angular.module('trvlApp', ['ui.router', 'firebase', 'ui.bootstrap', 'ngAnimate']);
 
-// auth check function to use with restricted views
-var authCheck = function(authSvc, $firebaseAuth) {
-  return authSvc.getCurrentAuth().$requireAuth();
-};
-authCheck.$inject = ["authSvc", "$firebaseAuth"];
-
 // config angular app with routes, using $stateProvider
 trvlApp.config(["$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
   $stateProvider
@@ -25,7 +19,9 @@ trvlApp.config(["$stateProvider", "$urlRouterProvider", function($stateProvider,
     templateUrl: 'app/routes/mytrips/mytripsTmpl.html',
     controller: 'mytripsCtrl',
     resolve: {
-      currAuth: authCheck
+      currAuth: ["authSvc", function(authSvc) {
+        return authSvc.isLoggedIn();
+      }]
     }
   })
   .state('trip', {
@@ -33,7 +29,9 @@ trvlApp.config(["$stateProvider", "$urlRouterProvider", function($stateProvider,
     templateUrl: 'app/routes/trip/tripTmpl.html',
     controller: 'tripCtrl',
     resolve: {
-      currAuth: authCheck
+      currAuth: ["authSvc", function(authSvc) {
+        return authSvc.isLoggedIn();
+      }]
     }
   });
 
@@ -80,12 +78,22 @@ trvlApp.service('authSvc', ["$firebaseObject", "$firebaseArray", "$firebaseAuth"
     return authObj.$authWithPassword(userObj);
   };
 
-  // get current auth status of user, e.g. to see if they can go to route
-  this.getCurrentAuth = function() {
-    return $firebaseAuth(baseRef);
+  // check if user is logged in
+  this.isLoggedIn = function() {
+    return authObj.$requireAuth()
+    .then(
+      function(response) {
+        console.log("user logged in. allowing access to private page.");
+        return response;
+      },
+      function(err) {
+        console.log("user not logged in, redirecting to login page.");
+        $state.go('login');
+      }
+    );
   };
 
-  // new get current auth status of user, returns promise that rejects if user logged out [REFACTOR WITH CURR AUTH FCN INTO ONE CHECK AUTH FUNCTION FOR ALL ROUTES THAT RESOLVES IF LOGGED IN REJECTS IF LOGGED OUT]
+  // new get current auth status of user, returns promise that rejects if user logged out
   this.isLoggedOut = function() {
     var auth = $firebaseAuth(baseRef); // get auth obj
     var def = $q.defer(); // create deferrer
@@ -93,6 +101,7 @@ trvlApp.service('authSvc', ["$firebaseObject", "$firebaseArray", "$firebaseAuth"
     .then(
       function(response) { // if promise resolves, user is logged in, reject promise
         console.log('user loggged in, not allowed to login page.');
+        $state.go('mytrips');
         def.reject();
       },
       function(err) { // if promise rejects, user is not logged in, resolve promise because they are allowed to login
@@ -191,7 +200,7 @@ trvlApp.service('dataOps', ["util", "userSvc", "tripSvc", "stopSvc", function(ut
 
 }]); //END
 
-trvlApp.service('mytripsOps', ["util", "$q", "userSvc", "tripSvc", "stopSvc", function(util, $q, userSvc, tripSvc, stopSvc) {
+trvlApp.service('mytripsOps', ["util", "$q", "$state", "userSvc", "tripSvc", "stopSvc", function(util, $q, $state, userSvc, tripSvc, stopSvc) {
   /*
   Functions for mytrips view
   */
@@ -239,7 +248,7 @@ trvlApp.service('mytripsOps', ["util", "$q", "userSvc", "tripSvc", "stopSvc", fu
       .then( // after userObj.onTrip set to true:
         function(response) {
           console.log("User's onTrip property set to true with response of:", response);
-          // $state.go('trip/' + newTripId);
+          $state.go('trip', {tripId: newTripId});
           def.resolve(response); // resolve promise,
         },
         util.rejectLog

@@ -2,11 +2,18 @@
 <div class="view-body container-fluid">
   <div class="row row-wrapper">
     <!--SIDEBAR-->
-    <div class="side-panel col-md-3">
-      <div class="trip-heading-container">
-        <h2>{{tripData.name}}</h2>
-        <h4 ng-show="tripData.isActive">Trip Status: <span class="active">ACTIVE</span></h4>
-        <h4 ng-hide="tripData.isActive">Trip Status: <span class="completed">COMPLETED</span></h4>
+    <div class="side-panel trip-side-panel col-md-3">
+      <div class="trip-sidebar-top">
+        <div class="trip-heading-container">
+          <h2>{{tripData.name}}</h2>
+          <h4 ng-show="tripData.isActive">Trip Status: <span class="active">ACTIVE</span></h4>
+          <h4 ng-hide="tripData.isActive">Trip Status: <span class="completed">COMPLETED</span></h4>
+        </div>
+        <div class="button-container">
+            <button ng-click="toggleForm()" type="button" name="button" class="btn btn-primary">Add Stop</button>
+            <button ng-show="tripData.isActive" ng-click="endCurrentTrip()" type="button" name="button" class="btn btn-warn">End Trip</button>
+            <button ng-click="deleteCurrentTrip()" type="button" name="button" class="btn btn-danger">Delete Trip</button>
+        </div>
       </div>
       <div class="trip-stats">
         <p><em>Stats:</em></p>
@@ -14,18 +21,13 @@
         <p><strong>Countries: </strong>{{currTripStats.countries}}</p>
         <p><strong>Distance: </strong>{{currTripStats.distance}}</p>
       </div>
-      <div class="button-container">
-          <button ng-click="toggleForm()" type="button" name="button" class="btn btn-primary">Add Stop</button>
-          <button ng-show="tripData.isActive" ng-click="endCurrentTrip()" type="button" name="button" class="btn btn-warn">End Trip</button>
-          <button ng-click="deleteCurrentTrip()" type="button" name="button" class="btn btn-danger">Delete Trip</button>
-      </div>
       <div ng-hide="userData.onTrip" class="location-box">
         <h5>Currently at home in:</h5>
         <h4>{{userData.homeCity.geo.city}}, {{userData.homeCity.geo.country}}</h4>
         <img src="{{getMapUrl(userData.homeCity.geo.lat, userData.homeCity.geo.lng)}}"></img>
       </div>
-      <div ng-show="userData.onTrip" class="trip-info-box" class="trip-info-box">
-        <h4>Currently Visiting: {{currData.lastStopData.geo.city}}, {{currData.lastStopData.geo.city}}</h4>
+      <div ng-show="userData.onTrip" class="location-box">
+        <h4>Currently Visiting:</h4> <h5>{{currData.lastStopData.geo.city}}, {{currData.lastStopData.geo.country}}</h5>
         <img src="{{getMapUrl(currData.lastStopData.geo.city, currData.lastStopData.geo.city)}}"></img>
       </div>
     </div>

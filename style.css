@@ -113,7 +113,7 @@
 
 .side-panel {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column nowrap;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
@@ -121,17 +121,27 @@
   padding: 20px;
 }
 
-.side-panel .trip-info {
+.side-panel .top-content {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.side-panel .bottom-content {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.side-panel .bottom-content .trip-info {
   flex-grow: 1;
 }
 
-.side-panel .trip-info h1 {
+.side-panel .bottom-content .trip-info h1 {
   margin-top: 0;
 }
 
-.side-panel .user-stats {
+.side-panel .bottom-content .user-stats {
   padding: 20px;
-  box-shadow: 5px 5px 5px #888888;
+  box-shadow: 5px 5px 5px 5px #888888;
   flex-grow: 2;
 }
 
@@ -140,9 +150,33 @@
   padding-left: 20px;
 }
 
+@media (max-width: 992px) {
+  .side-panel {
+    flex-flow: row nowrap;
+    justify-content: space-between;
+  }
+  .side-panel .bottom-content {
+    flex-grow: 2;
+    flex-flow: row nowrap;
+    align-content: space-between;
+  }
+  .side-panel .bottom-content .location-box, .side-panel .bottom-content .user-stats {
+    margin-left: 20px;
+  }
+}
+
 @media (max-width: 600px) {
   .side-panel {
     flex-flow: column nowrap;
+  }
+  .side-panel .top-content {
+    flex-flow: row nowrap;
+    align-items: space-between;
+  }
+  .side-panel .top-content h1 {
+    font-size: 30px;
+    margin-right: 20px;
+    margin-top: 10px;
   }
 }
 
@@ -155,20 +189,38 @@
 }
 
 /*VARIABLES*/
-.trip-info-container {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: space-between;
+.trip-heading-container h2, .trip-heading-container h4 {
+  text-align: center;
+}
+
+.button-container {
+  text-align: center;
+}
+
+.button-container button {
+  margin-top: 10px;
+}
+
+.trip-stats {
+  box-shadow: 5px 5px 5px 5px #888888;
+  padding: 20px;
   margin-top: 20px;
 }
 
-.trip-info-container .trip-heading-container {
-  margin-left: 20px;
+@media (max-width: 992px) {
+  .trip-sidebar-top {
+    flex-grow: 3;
+  }
+  .trip-stats, .location-box {
+    flex-grow: 2;
+  }
+  .location-box {
+    margin-left: 20px;
+  }
 }
 
-.trip-info-container .trip-heading-container h2 {
-  margin: 0;
+.form-container {
+  padding-left: 30px;
 }
 
 .stop-box {
