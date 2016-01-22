@@ -1,9 +1,8 @@
 <menu-bar user-data="userData" curr-data="currData"></menu-bar>
 <div class="view-body container-fluid">
   <div class="row row-wrapper">
-    <!--SIDEBAR-->
-    <div class="side-panel trip-side-panel col-md-3">
-      <div class="trip-sidebar-top">
+    <div class="side-panel col-md-3"><!--SIDEBAR-->
+      <div class="top-content">
         <div class="trip-heading-container">
           <h2>{{tripData.name}}</h2>
           <h4 ng-show="tripData.isActive">Trip Status: <span class="active">ACTIVE</span></h4>
@@ -15,7 +14,7 @@
             <button ng-click="deleteCurrentTrip()" type="button" name="button" class="btn btn-danger">Delete Trip</button>
         </div>
       </div>
-      <div class="trip-stats">
+      <div class="stats-box">
         <p><em>Stats:</em></p>
         <p><strong>Stops: </strong> {{currTripStats.stops}} </p>
         <p><strong>Countries: </strong>{{currTripStats.countries}}</p>
@@ -33,90 +32,91 @@
     </div>
 
     <!--New stop forms. Display differently based on if trip is active or not.-->
-    <div ng-show="showForm" class="form-wrapper">
+    <div class="main-panel col-md-9">
+      <div ng-show="showForm" class="form-wrapper">
 
-      <!-- Full form (add current or past stops) for active trips -->
-      <div ng-if="tripData.isActive" class="form-container row col-md-9">
-        <form class="current-trip-form form-inline">
-          <div class="form-heading-container">
-            <h5>Add a new stop to {{tripData.name}} trip.</h5>
-            <h6>Select "Past Stop" to submit a stop for this trip that you have already completed.</h6>
-          </div>
-          <div class="form-group">
-            <label>Stop: </label>
-            <city-search city-data="newStopObj.stopData"></city-search>
-          </div>
-          <div ng-hide="pastStop" class="button-group form-group">
-            <button ng-click="addCurrentStopToTrip(newStopObj)" class="btn btn-primary">Add Stop</button>
-            <button ng-click="toggleForm()" type="button" name="button" class="btn btn-warning">Cancel</button>
-          </div>
-          <div class="form-group">
-            <label>Past stop? </label>
-            <input ng-model="pastStop" type="checkbox" name="name" value="">
-          </div>
-          <!-- optional second section to add past stop w/ dates -->
-          <div ng-show="pastStop" class="form-group">
+        <!-- Full form (add current or past stops) for active trips -->
+        <div ng-if="tripData.isActive" class="form-container">
+          <form class="current-trip-form form-inline">
+            <div class="form-heading-container">
+              <h5>Add a new stop to {{tripData.name}} trip.</h5>
+              <h6>Select "Past Stop" to submit a stop for this trip that you have already completed.</h6>
+            </div>
+            <div class="form-group">
+              <label>Stop: </label>
+              <city-search city-data="newStopObj.stopData"></city-search>
+            </div>
+            <div ng-hide="pastStop" class="button-group form-group">
+              <button ng-click="addCurrentStopToTrip(newStopObj)" class="btn btn-primary">Add Stop</button>
+              <button ng-click="toggleForm()" type="button" name="button" class="btn btn-warning">Cancel</button>
+            </div>
+            <div class="form-group">
+              <label>Past stop? </label>
+              <input ng-model="pastStop" type="checkbox" name="name" value="">
+            </div>
+            <!-- optional second section to add past stop w/ dates -->
+            <div ng-show="pastStop" class="form-group">
+              <div class="form-group">
+                <div class="form-group">
+                  <label for="start-date-input">Arrive Date: </label>
+                  <input type="date" ng-model="newStopObj.arriveTimestamp" id="start-date-input">
+                </div>
+                <div class="form-group">
+                  <label for="end-date-input">Depart Date: </label>
+                  <input type="date" ng-model="newStopObj.departTimestamp" id="end-date-input">
+                </div>
+              </div>
+              <div class="button-group form-group">
+                <button ng-click="addPastStopToTrip(newStopObj)" class="btn btn-primary">Add Past Stop</button>
+                <button ng-click="toggleForm()" type="button" name="button" class="btn btn-warning">Cancel</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Past stop only form for completed trips -->
+        <div ng-if="!tripData.isActive" class="form-container row">
+          <form class="completed-trip-form form-inline">
+            <div class="form-heading-container">
+              <h5>Add a past stop to {{tripData.name}}.</h5>
+            </div>
+            <div class="form-group">
+              <label>Stop: </label>
+              <city-search city-data="pastStopObj.stopData"></city-search>
+            </div>
             <div class="form-group">
               <div class="form-group">
-                <label for="start-date-input">Arrive Date: </label>
-                <input type="date" ng-model="newStopObj.arriveTimestamp" id="start-date-input">
+                <label>Arrive Date: </label>
+                <input type="date" ng-model="pastStopObj.arriveTimestamp">
               </div>
               <div class="form-group">
-                <label for="end-date-input">Depart Date: </label>
-                <input type="date" ng-model="newStopObj.departTimestamp" id="end-date-input">
+                <label>Depart Date: </label>
+                <input type="date" ng-model="pastStopObj.departTimestamp">
               </div>
             </div>
             <div class="button-group form-group">
-              <button ng-click="addPastStopToTrip(newStopObj)" class="btn btn-primary">Add Past Stop</button>
+              <button ng-click="addPastStopToTrip(pastStopObj)" class="btn btn-primary">Add Past Stop</button>
+              <button ng-click="toggleForm()" type="button" name="button" class="btn btn-warning">Cancel</button>
             </div>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
+      </div> <!--end of form wrapper -->
 
-      <!-- Past stop only form for completed trips -->
-      <div ng-if="!tripData.isActive" class="form-container row col-md-9">
-        <form class="completed-trip-form form-inline">
-          <div class="form-heading-container">
-            <h5>Add a past stop to {{tripData.name}}.</h5>
-          </div>
-          <div class="form-group">
-            <label>Stop: </label>
-            <city-search city-data="pastStopObj.stopData"></city-search>
-          </div>
-          <div class="form-group">
-            <div class="form-group">
-              <label>Arrive Date: </label>
-              <input type="date" ng-model="pastStopObj.arriveTimestamp">
+      <div class="stop-box-container row">
+        <div ng-repeat="stop in allStops | orderBy: '-arriveTimestamp'" class="stop-box col-md-6">
+          <div class="stop-wrapper">
+            <div class="stop-map-wrapper">
+              <img ng-src="{{getMapUrl(stop.stopData.geo.lat, stop.stopData.geo.lng)}}"></img>
             </div>
-            <div class="form-group">
-              <label>Depart Date: </label>
-              <input type="date" ng-model="pastStopObj.departTimestamp">
+            <div class="stop-details">
+              <p><strong>Place: </strong>{{stop.stopData.placeString}}</p>
+              <p><strong>Arrive Date: </strong>{{stop.arriveTimestamp | date: 'MM/dd/yyyy' }}</p>
+              <p><strong>Depart Date: </strong>{{stop.departTimestamp | date: 'MM/dd/yyyy'}}</p>
+              <button type="button" class="btn btn-warning">Delete Stop</button>
             </div>
-          </div>
-          <div class="button-group form-group">
-            <button ng-click="addPastStopToTrip(pastStopObj)" class="btn btn-primary">Add Past Stop</button>
-            <button ng-click="toggleForm()" type="button" name="button" class="btn btn-warning">Cancel</button>
-          </div>
-        </form>
-      </div>
-    </div> <!--end of form wrapper -->
-
-
-    <div class="stop-box-container col-md-9 row">
-      <div ng-repeat="stop in allStops | orderBy: '-arriveTimestamp'" class="stop-box col-md-6">
-        <div class="stop-wrapper">
-          <div class="stop-map-wrapper">
-            <img ng-src="{{getMapUrl(stop.stopData.geo.lat, stop.stopData.geo.lng)}}"></img>
-          </div>
-          <div class="stop-details">
-            <p><strong>Place: </strong>{{stop.stopData.placeString}}</p>
-            <p><strong>Arrive Date: </strong>{{stop.arriveTimestamp | date: 'MM/dd/yyyy' }}</p>
-            <p><strong>Depart Date: </strong>{{stop.departTimestamp | date: 'MM/dd/yyyy'}}</p>
-            <button type="button" class="btn btn-warning">Delete Stop</button>
           </div>
         </div>
-      </div>
-    </div>
-
-  </div> <!--wrapper-->
+      </div> <!-- stop box container-->
+    </div> <!-- main panel wrapper-->
+  </div> <!--main row wrapper -->
 </div> <!--end -->

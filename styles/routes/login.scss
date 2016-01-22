@@ -21,7 +21,17 @@
     }
   }
 
+  label {
+    white-space: nowrap;
+  }
+
   p {
     text-align: center;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  #user-access-form {
+    border-radius: 0;
   }
 }

@@ -13,37 +13,35 @@
           <h4>Current Trip: <a ui-sref="trip({tripId: currData.lastTripId})">{{currData.lastTripName}}</a></h4>
         </div>
       </div>
-      <div class="bottom-content">
-        <div class=user-stats>
+      <div class=stats-box>
+        <div class="stats-wrapper">
           <h5><em>User Stats:</em></h5>
-          <!-- <p><strong>Trips: </strong> {{userData.userStats.trips}}</p>
-          <p><strong>Cities: </strong> {{userData.userStats.cities}}</p>
-          <p><strong>Countries: </strong> {{userData.userStats.countries}}</p>
-          <p><strong>Miles: </strong> {{userData.userStats.distance}}</p> -->
           <p><strong>Trips: </strong> 3 </p>
           <p><strong>Cities: </strong> 8</p>
           <p><strong>Countries: </strong> 5</p>
           <p><strong>Miles: </strong> 34,022</p>
         </div>
-        <div ng-hide="userData.onTrip" class="location-box">
-          <h5>Currently at home in:</h5>
-          <h4>{{userData.homeCity.geo.city}}, {{userData.homeCity.geo.country}}</h4>
-          <img src="{{getMapUrl(userData.homeCity.geo.lat, userData.homeCity.geo.lng)}}"></img>
-        </div>
-        <div ng-show="userData.onTrip" class="location-box">
-          <h4>Currently Visiting:</h4> <h5>{{currData.lastStopData.geo.city}}, {{currData.lastStopData.geo.country}}</h5>
-          <img ng-src="{{getMapUrl(currData.lastStopData.geo.city, currData.lastStopData.geo.city)}}"></img>
-        </div>
+      </div>
+      <div ng-hide="userData.onTrip" class="location-box">
+        <h5>Currently at home in:</h5>
+        <h4>{{userData.homeCity.geo.city}}, {{userData.homeCity.geo.country}}</h4>
+        <img src="{{getMapUrl(userData.homeCity.geo.lat, userData.homeCity.geo.lng)}}"></img>
+      </div>
+      <div ng-show="userData.onTrip" class="location-box">
+        <h4>Currently Visiting:</h4> <h5>{{currData.lastStopData.geo.city}}, {{currData.lastStopData.geo.country}}</h5>
+        <img ng-src="{{getMapUrl(currData.lastStopData.geo.city, currData.lastStopData.geo.city)}}"></img>
       </div>
     </div>
 
     <div class="main-panel col-md-9">
+
       <uib-accordion close-others="oneAtATime" class="row">
         <uib-accordion-group heading="{{trip.name}}: {{trip.startTimestamp | date: 'MM/dd/yyyy'}} - {{trip.endTimestamp | date: 'MM/dd/yyyy'}}" ng-repeat="trip in userTrips | orderBy: '-endTimestamp'">
           <a ui-sref="trip({tripId: trip.$id})">Go To {{trip.name}} Trip Page</a>
-          <img src="http://blondietravelblog.com/wp-content/uploads/2012/03/Route-66-map.png"/>
+          <img class="img-responsive" src="http://blondietravelblog.com/wp-content/uploads/2012/03/Route-66-map.png"/>
         </uib-accordion-group>
       </uib-accordion>
+
       <form ng-hide="userData.onTrip" class="new-trip-form form-inline">
         <div class="form-heading-container">
           <h5>Start a new trip, when you've arrived to first stop:</h5>
@@ -64,7 +62,7 @@
           <h5>Add a completed trip:</h5>
         </div>
         <div class="form-group">
-          <label for="old-trip-name">New Trip Name</label>
+          <label for="old-trip-name">Trip Name</label>
           <input ng-model="oldTripObj.name" id="old-trip-name" class="form-control" type="text" placeholder="Enter a trip name">
         </div>
         <div class="form-group">
@@ -78,11 +76,10 @@
               <input type="date" ng-model="oldTripObj.endTimestamp" id="end-date-input">
             </div>
           </div>
-          <div class="button-group form-group">
-            <button ng-click="addPastTrip(oldTripObj)" class="btn btn-primary">Add Trip</button>
-          </div>
+          <button ng-click="addPastTrip(oldTripObj)" class="btn btn-primary">Add Trip</button>
         </div>
       </form>
+
     </div>
   </div>
 </div> <!--END -->

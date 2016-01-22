@@ -3,7 +3,8 @@
 $background-color: #f5f5f5;
 $panel-margin: 20px;
 $menu-height: 60px;
-$main-box-shadow: 5px 5px 5px 5px #888888;
+$box-margin: 10px;
+$stats-padding: 40px;
 
 .view-body {
   padding-top: $menu-height;
@@ -14,74 +15,61 @@ $main-box-shadow: 5px 5px 5px 5px #888888;
   flex-flow: column nowrap;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: $panel-margin;
   background-color: $background-color;
   padding: $panel-margin;
-
-  .top-content {
-    display: flex;
-    flex-flow: column nowrap;
-  }
-
-  .bottom-content {
-    display: flex;
-    flex-flow: column nowrap;
-    .trip-info {
-      flex-grow: 1;
-      h1 {
-        margin-top: 0;
-      }
-    }
-
-    .user-stats {
-      padding: $panel-margin;
-      box-shadow: $main-box-shadow;
-      flex-grow: 2;
-    }
-  }
-
-  .location-box {
-    flex-grow: 1;
-    padding-left: $panel-margin;
-  }
-}
-
-@media (max-width: 992px) {
-  .side-panel {
-    flex-flow: row nowrap;
-    justify-content: space-between;
-
-    .bottom-content {
-      flex-grow: 2;
-      flex-flow: row nowrap;
-      align-content: space-between;
-      .location-box, .user-stats {
-        margin-left: 20px;
-      }
-    }
-  }
-
-}
-
-@media (max-width: 600px) {
-  .side-panel {
-    flex-flow: column nowrap;
+  text-align: center;
 
     .top-content {
-      flex-flow: row nowrap;
-      align-items: space-between;
-
-      h1 {
-        font-size: 30px;
-        margin-right: 20px;
-        margin-top: 10px;
+      h1, h2 { // h2 for side
+        margin-top: 0;
+        text-align: center;
       }
     }
+
+    .stats-box {
+      padding: $box-margin $stats-padding;
+      margin-top: $box-margin;
+      background-color: white;
+    }
+
+    .location-box {
+      padding-left: $panel-margin;
+      text-align: center;
+    }
+}
+
+@media screen and (max-width: 993px) {
+  .side-panel {
+    flex-flow: row nowrap;
+    justify-content: space-around;
+
+    .stats-box {
+      margin-left: $panel-margin;
+    }
+  }
+}
+
+@media (max-width: 625px) {
+  .side-panel {
+    flex-flow: column nowrap;
+
+      .top-content {
+        h1 {
+          font-size: 30px;
+          margin-top: $box-margin;
+        }
+      }
   }
 }
 
 .main-panel {
   padding: $panel-margin;
+
+  .form-inline {
+    border: $form-border;
+    border-radius: $master-border-radius;
+    padding: $panel-margin;
+  }
 }
 
 .accordion-toggle {
