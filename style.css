@@ -13,73 +13,6 @@
 }
 
 /*VARIABLES*/
-.menu-bar {
-  width: 100%;
-  height: 60px;
-  position: fixed;
-  z-index: 1000;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #00898f;
-  color: white;
-  padding: 20px;
-}
-
-.menu-bar .first-half {
-  display: flex;
-  flex-flow: row nowrap;
-}
-
-.menu-bar .first-half .header-logo {
-  flex-grow: 2;
-}
-
-.menu-bar .first-half .header-logo h2 {
-  margin: 0;
-}
-
-.menu-bar .first-half .header-buttons {
-  margin-left: 25px;
-}
-
-.menu-bar .first-half .header-buttons button {
-  background-color: #00898f;
-  border: 2px solid white;
-  margin: 0 15px;
-}
-
-.menu-bar .second-half {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-}
-
-.menu-bar .second-half .header-text {
-  border-right: 2px solid white;
-  margin: 0 15px;
-  padding: 0 20px;
-}
-
-.menu-bar .second-half .header-text span {
-  display: block;
-  font-style: italic;
-  text-align: right;
-}
-
-.menu-bar .second-half .header-links a {
-  color: white;
-  text-decoration: underline;
-}
-
-@media screen and (max-width: 650px) {
-  .header-text {
-    display: none;
-  }
-}
-
-/*VARIABLES*/
 /* for view-body on login page */
 .full-screen-photo {
   background-image: url("img/login-photo.jpg");
@@ -227,5 +160,72 @@ Sidebar rules imported from mytrips.scss
   .stop-box .stop-wrapper img {
     width: 25vw;
     height: auto;
+  }
+}
+
+/*VARIABLES*/
+.menu-bar {
+  width: 100%;
+  height: 60px;
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #00898f;
+  color: white;
+  padding: 20px;
+}
+
+.menu-bar .first-half {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.menu-bar .first-half .header-logo {
+  flex-grow: 2;
+}
+
+.menu-bar .first-half .header-logo h2 {
+  margin: 0;
+}
+
+.menu-bar .first-half .header-buttons {
+  margin-left: 25px;
+}
+
+.menu-bar .first-half .header-buttons button {
+  background-color: #00898f;
+  border: 2px solid white;
+  margin: 0 15px;
+}
+
+.menu-bar .second-half {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+.menu-bar .second-half .header-text {
+  border-right: 2px solid white;
+  margin: 0 15px;
+  padding: 0 20px;
+}
+
+.menu-bar .second-half .header-text span {
+  display: block;
+  font-style: italic;
+  text-align: right;
+}
+
+.menu-bar .second-half .header-links a {
+  color: white;
+  text-decoration: underline;
+}
+
+@media screen and (max-width: 650px) {
+  .header-text {
+    display: none;
   }
 }
