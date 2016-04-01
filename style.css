@@ -222,3 +222,10 @@ Sidebar rules imported from mytrips.scss
 .stop-box .stop-wrapper img, .stop-box .stop-wrapper .stop-details {
   margin-left: 15px;
 }
+
+@media screen and (max-width: 600px) {
+  .stop-box .stop-wrapper img {
+    width: 25vw;
+    height: auto;
+  }
+}

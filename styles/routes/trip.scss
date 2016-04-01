@@ -43,5 +43,18 @@ Sidebar rules imported from mytrips.scss
     img, .stop-details  {
       margin-left: $stop-box-internal-margin;
     }
+
+
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .stop-box {
+    .stop-wrapper {
+      img {
+        width: 25vw;
+        height: auto;
+      }
+    }
   }
 }
